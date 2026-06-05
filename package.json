@@ -7,9 +7,25 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "cy:open": "cypress open",
+    "cy:run": "cypress run",
+    "cy:debug": "cypress run --headed --no-exit --browser chrome",
+    "report:clean": "node -e \"require('fs').rmSync('cypress/reports', {recursive: true, force: true})\"",
+    "report:merge": "mochawesome-merge cypress/reports/mochawesome*.json > cypress/reports/merged.json",
+    "report:generate": "marge cypress/reports/merged.json -o cypress/reports --inline",
+    "report:build": "npm run report:merge && npm run report:generate",
+    "test": "run-s report:clean cy:run --continue-on-error report:build",
+    "test:mapel": "npm run report:clean && npx cypress run --spec \"cypress/e2e/stagingv3/pengaturan mapel/*.cy.js\" & npm run report:build",
+    "test:mapel:tambah": "npm run report:clean && npx cypress run --spec \"cypress/e2e/stagingv3/pengaturan mapel/tambahmapel.cy.js\" & npm run report:build",
+    "test:mapel:edit": "npm run report:clean && npx cypress run --spec \"cypress/e2e/stagingv3/pengaturan mapel/editmapel.cy.js\" & npm run report:build",
+    "test:mapel:hapus": "npm run report:clean && npx cypress run --spec \"cypress/e2e/stagingv3/pengaturan mapel/hapusmapel.cy.js\" & npm run report:build",
+    "test:mapel:list": "npm run report:clean && npx cypress run --spec \"cypress/e2e/stagingv3/pengaturan mapel/listmapel.cy.js\" & npm run report:build"
   },
   "devDependencies": {
-    "cypress": "^14.0.2"
+    "cypress": "^14.0.2",
+    "mochawesome": "^7.1.4",
+    "mochawesome-merge": "^5.1.1",
+    "mochawesome-report-generator": "^6.3.2",
+    "npm-run-all": "^4.1.5"
   }
 }

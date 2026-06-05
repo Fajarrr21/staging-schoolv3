@@ -1,0 +1,81 @@
+{
+  "urls": {
+    "base": "https://staging-new-school.cazh.id",
+    "subjectList": "/setting/academic/subject",
+    "login": "/auth/login"
+  },
+  "credentials": {
+    "email": "admin@cazh.id",
+    "password": "@GrahaTimur2026"
+  },
+  "instansi": {
+    "primary": "SMP Digital Indonesia+",
+    "secondary": "Koperasi SMP"
+  },
+  "labels": {
+    "pageTitle": "Mata Pelajaran",
+    "btnTambah": "Tambah Mata Pelajaran",
+    "btnSimpan": "Simpan",
+    "btnBatal": "Batal",
+    "btnHapus": "Hapus",
+    "placeholderName": "Contoh: Matematika",
+    "placeholderCode": "Contoh: MTK001",
+    "placeholderInstansi": "Pilih Instansi",
+    "editTitle": "Edit Mata Pelajaran",
+    "deleteTitle": "Hapus Mata Pelajaran",
+    "statusActive": "Aktif",
+    "statusInactive": "Tidak Aktif",
+    "filterStatusAll": "Semua",
+    "searchPlaceholder": "Cari",
+    "emptyStateTitle": "Data Mata Pelajaran tidak ditemukan",
+    "columnDibuatPada": "Dibuat Pada"
+  },
+  "messages": {
+    "instansiRequired": "Instansi wajib diisi",
+    "nameRequired": "Mata Pelajaran wajib diisi",
+    "duplicateName": "Mata pelajaran dengan nama tersebut sudah ada",
+    "addSuccess": "Mata pelajaran berhasil ditambahkan",
+    "editSuccess": "Mata pelajaran berhasil diperbarui",
+    "deleteSuccess": "Mata pelajaran berhasil dihapus"
+  },
+  "columns": {
+    "instansi": 0,
+    "nama": 1,
+    "kode": 2,
+    "status": 3,
+    "createdAt": 4,
+    "action": 5
+  },
+  "testData": {
+    "existingSubject": "pjok",
+    "existingSubjectUppercase": "PJOK",
+    "existingSubjectPadded": "  pjok  ",
+    "spaceOnly": "     ",
+    "specialChar": "@#$! invalid",
+    "longCode": "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890ABCDEFGHIJKLM",
+    "codeWithSpecial": "MTK@#01",
+    "codeUppercase": "TESTUP",
+    "codeLowercase": "testup",
+    "codeNumeric": "12345",
+    "codeWithSpaces": "  MTK001  ",
+    "noMatchSearch": "asdfgh123456notexist",
+    "boundaries": {
+      "nameOverflow": 300,
+      "minName": 1
+    }
+  },
+  "viewports": {
+    "fhd": { "width": 1920, "height": 1080 },
+    "hd":  { "width": 1280, "height": 720 }
+  },
+  "timeouts": {
+    "dialog": 15000,
+    "dropdown": 6000,
+    "shortAction": 800,
+    "validation": 1000,
+    "errorCheck": 2000,
+    "modalAnim": 500,
+    "toastDismiss": 5000,
+    "searchDebounce": 1000
+  }
+}

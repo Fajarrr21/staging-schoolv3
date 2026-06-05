@@ -1,0 +1,57 @@
+{
+  "urls": {
+    "base": "https://staging-new-school.cazh.id",
+    "login": "/auth/login",
+    "forgotPassword": "/forgot-password"
+  },
+  "credentials": {
+    "valid": {
+      "email": "admin@cazh.id",
+      "password": "@GrahaTimur2026"
+    },
+    "validLowercase": {
+      "email": "admin@cazh.id",
+      "password": "@GrahaTimur2026"
+    },
+    "wrongPassword": {
+      "email": "admin@cazh.id",
+      "password": "passwordsalah123"
+    },
+    "unregisteredEmail": {
+      "email": "tidakterdaftar@email.com",
+      "password": "@GrahaTimur2026"
+    },
+    "allWrong": {
+      "email": "salah@email.com",
+      "password": "passwordsalah"
+    },
+    "invalidFormat": {
+      "email": "admincazh",
+      "password": "@GrahaTimur2026"
+    },
+    "specialChar": {
+      "email": "@@##$$%%",
+      "password": "@@##$$%%"
+    }
+  },
+  "messages": {
+    "invalidCredentials": "Identitas tersebut tidak cocok dengan data kami",
+    "emailRequired": "Email wajib diisi"
+  },
+  "labels": {
+    "emailPlaceholder": "Masukkan email",
+    "submitButton": "Masuk",
+    "forgotPasswordLink": "Lupa"
+  },
+  "viewports": {
+    "mobile":  { "width": 375,  "height": 812 },
+    "tablet":  { "width": 768,  "height": 1024 },
+    "desktop": { "width": 1280, "height": 800 }
+  },
+  "performance": {
+    "maxLoginMs": 8000
+  },
+  "timeouts": {
+    "redirect": 10000
+  }
+}
