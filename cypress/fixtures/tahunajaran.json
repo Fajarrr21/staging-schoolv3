@@ -1,0 +1,54 @@
+{
+  "credentials": {
+    "email": "admin@cazh.id",
+    "password": "@GrahaTimur2026"
+  },
+  "urls": {
+    "base": "https://staging-new-school.cazh.id",
+    "login": "/auth",
+    "list": "/setting/academic/school-year"
+  },
+  "labels": {
+    "pageTitle": "Tahun Ajaran",
+    "btnTambah": "Tambah Tahun Ajaran",
+    "modalTitle": "Tambah Tahun Ajaran",
+    "editModalTitle": "Edit Tahun Ajaran",
+    "deleteModalTitle": "Hapus Tahun Ajaran",
+    "fieldTahun": "Tahun Ajaran",
+    "fieldTanggalMulai": "Tanggal Mulai",
+    "fieldTanggalAkhir": "Tanggal Akhir",
+    "btnSimpan": "Simpan",
+    "btnBatal": "Batal",
+    "statusAktif": "Aktif",
+    "statusTidakAktif": "Tidak Aktif",
+    "badgeGanjil": "GANJIL",
+    "badgeGenap": "GENAP",
+    "searchPlaceholder": "Cari",
+    "emptyStateText": "Data Tahun Ajaran tidak ditemukan",
+    "emptyStateBtn": "Tambah Tahun Ajaran"
+  },
+  "messages": {
+    "successAdd": "Tahun ajaran berhasil ditambahkan",
+    "editSuccess": "Tahun ajaran berhasil diperbarui",
+    "saveSuccess": "berhasil diperbarui",
+    "deleteSuccess": "berhasil dihapus",
+    "tahunRequired": "Tahun Ajaran wajib diisi",
+    "tanggalMulaiRequired": "Tanggal Mulai wajib diisi",
+    "tanggalAkhirRequired": "Tanggal Akhir wajib diisi"
+  },
+  "timeouts": {
+    "shortAction": 5000,
+    "dialog": 10000,
+    "errorCheck": 8000,
+    "toast": 10000,
+    "datePicker": 5000,
+    "search": 3000
+  },
+  "targetData": {
+    "legacyYear": "2011/2012",
+    "legacySemester": "GANJIL",
+    "realtimeYear": "2026/2027",
+    "realtimeSemester": "GANJIL"
+  },
+  "currentYear": 2026
+}

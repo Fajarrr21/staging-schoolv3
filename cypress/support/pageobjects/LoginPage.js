@@ -60,13 +60,19 @@ class LoginPage {
     return this;
   }
 
+  /**
+   * Login via cy.session dengan URL-based validation (lebih reliable)
+   * Gak depend pada userAvatar selector yang bisa berubah
+   */
   loginViaSession(email, password, baseUrl, loginPath) {
     cy.session(`session-${email}`, () => {
       cy.visit(`${baseUrl}${loginPath}`);
       this.elements.emailInput().type(email);
       this.elements.passwordInput().type(password);
       this.elements.submitBtn().click();
-      this.elements.userAvatar().should('be.visible');
+      // Validate login sukses pakai URL check (paling reliable)
+      cy.url({ timeout: 15000 }).should('not.include', loginPath);
+      cy.wait(1000); // wait app stabilize
     });
     return this;
   }
@@ -79,7 +85,7 @@ class LoginPage {
 
   assertLoggedIn() {
     cy.url().should('not.contain', 'callbackUrl');
-    this.elements.userAvatar().should('be.visible');
+    cy.url().should('not.contain', '/auth');
     return this;
   }
 
