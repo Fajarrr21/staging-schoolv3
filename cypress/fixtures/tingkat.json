@@ -1,0 +1,46 @@
+{
+  "urls": {
+    "base": "https://staging-new-school.cazh.id",
+    "login": "/auth/login",
+    "dashboard": "/dashboard",
+    "list": "/setting/academic/school-level"
+  },
+  "credentials": {
+    "email": "admin@cazh.id",
+    "password": "@GrahaTimur2026"
+  },
+  "instansi": {
+    "primary": "Koperasi SMP",
+    "secondary": "SDIT"
+  },
+  "office": {
+    "primaryId": "68c230c20831df00194c8818",
+    "secondaryId": "68ad284c0a04f100196aa4c3"
+  },
+  "list": {
+    "emptyText": "Data Tingkat tidak ditemukan",
+    "columns": ["Instansi", "Tingkat", "Status", "Dibuat Pada"],
+    "statusAktif": "Aktif",
+    "statusTidakAktif": "Tidak Aktif",
+    "statusSemua": "Semua"
+  },
+  "labels": {
+    "modalTitle": "Tambah Tingkat",
+    "toastSuccess": "Tingkat berhasil ditambahkan",
+    "statusAktif": "Aktif"
+  },
+  "messages": {
+    "duplicate": "sudah ada",
+    "invalidChar": "Nama hanya boleh berisi huruf, angka, dan spasi"
+  },
+  "api": {
+    "login": "**/api/auth/login",
+    "create": "**/school-level**"
+  },
+  "timeouts": {
+    "shortAction": 1500,
+    "dialog": 8000,
+    "toast": 8000
+  },
+  "testPrefix": "QA"
+}
