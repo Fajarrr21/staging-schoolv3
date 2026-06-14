@@ -1,0 +1,86 @@
+{
+  "urls": {
+    "base": "https://staging-new-school.cazh.id",
+    "kelasList": "/setting/academic/class",
+    "login": "/auth/login"
+  },
+  "credentials": {
+    "email": "admin@cazh.id",
+    "password": "@GrahaTimur2026"
+  },
+  "instansi": {
+    "primary": "SDIT",
+    "secondary": "Sekolah Alam",
+    "empty": ""
+  },
+  "labels": {
+    "pageTitle": "Kelas",
+    "btnTambah": "Tambah Kelas",
+    "btnSimpan": "Simpan",
+    "btnBatal": "Batal",
+    "addTitle": "Tambah Kelas",
+    "placeholderName": "Pilih Kelas",
+    "placeholderInstansi": "Pilih Instansi",
+    "statusActive": "Aktif",
+    "statusInactive": "Tidak Aktif",
+    "searchPlaceholder": "Cari",
+    "emptyStateTitle": "Data Kelas tidak ditemukan",
+    "filterStatusAll": "Semua",
+    "editTitle": "Edit Kelas",
+    "deleteTitle": "Hapus Kelas",
+    "btnHapus": "Hapus"
+  },
+  "messages": {
+    "instansiRequired": "Instansi wajib diisi",
+    "nameRequired": "Kelas wajib diisi",
+    "requiredGeneric": "wajib diisi",
+    "invalidChar": "Nama hanya boleh berisi huruf, angka, dan spasi",
+    "duplicateName": "Kelas dengan nama tersebut sudah ada di instansi ini",
+    "addSuccess": "Kelas berhasil ditambahkan",
+    "editSuccess": "Kelas berhasil diperbarui",
+    "deleteSuccess": "Kelas berhasil dihapus"
+  },
+  "columns": {
+    "instansi": 0,
+    "nama": 1,
+    "status": 2,
+    "createdAt": 3,
+    "edit": 4,
+    "delete": 5
+  },
+  "testData": {
+    "prefix": "QA",
+    "specialBang": "!",
+    "specialMix": "Kelas@#$%",
+    "dashSuffix": "-A",
+    "spaceOnly": "     ",
+    "minName": "A",
+    "boundaries": {
+      "nameOverflow": 300
+    },
+    "noMatchSearch": "ZZZQA000NOTEXIST"
+  },
+  "bug": {
+    "duplicateSilent": "BUG-008"
+  },
+  "viewports": {
+    "fhd": {
+      "width": 1920,
+      "height": 1080
+    },
+    "hd": {
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "timeouts": {
+    "dialog": 15000,
+    "dropdown": 6000,
+    "shortAction": 800,
+    "validation": 1000,
+    "errorCheck": 2000,
+    "modalAnim": 500,
+    "toastDismiss": 5000,
+    "searchDebounce": 1000
+  }
+}
