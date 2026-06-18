@@ -1,0 +1,88 @@
+{
+  "urls": {
+    "base": "https://staging-new-school.cazh.id",
+    "jurusanList": "/setting/academic/major",
+    "login": "/auth/login"
+  },
+  "credentials": {
+    "email": "admin@cazh.id",
+    "password": "@GrahaTimur2026"
+  },
+  "instansi": {
+    "primary": "SDIT",
+    "secondary": "Sekolah Alam",
+    "empty": ""
+  },
+  "labels": {
+    "pageTitle": "Jurusan",
+    "btnTambah": "Tambah Jurusan",
+    "btnSimpan": "Simpan",
+    "btnBatal": "Batal",
+    "addTitle": "Tambah Jurusan",
+    "placeholderName": "Contoh: IPA",
+    "placeholderInstansi": "Pilih Instansi",
+    "statusActive": "Aktif",
+    "statusInactive": "Tidak Aktif",
+    "searchPlaceholder": "Cari",
+    "emptyStateTitle": "Data Jurusan tidak ditemukan",
+    "filterStatusAll": "Semua",
+    "editTitle": "Edit Jurusan",
+    "deleteTitle": "Hapus Jurusan",
+    "btnHapus": "Hapus"
+  },
+  "messages": {
+    "instansiRequired": "Instansi wajib diisi",
+    "nameRequired": "Jurusan wajib diisi",
+    "requiredGeneric": "wajib diisi",
+    "invalidChar": "Nama hanya boleh berisi huruf, angka, dan spasi",
+    "duplicateName": "Jurusan dengan nama tersebut sudah ada di instansi ini",
+    "addSuccess": "Jurusan berhasil ditambahkan",
+    "editSuccess": "Jurusan berhasil diperbarui",
+    "deleteSuccess": "Jurusan berhasil dihapus"
+  },
+  "columns": {
+    "instansi": 0,
+    "nama": 1,
+    "status": 2,
+    "createdAt": 3,
+    "edit": 4,
+    "delete": 5
+  },
+  "testData": {
+    "prefix": "QA",
+    "specialBang": "!",
+    "specialMix": "Jurusan@#$%",
+    "dashSuffix": "-A",
+    "spaceOnly": "     ",
+    "minName": "A",
+    "boundaries": {
+      "nameOverflow": 300
+    },
+    "noMatchSearch": "ZZZQA000NOTEXIST"
+  },
+  "bug": {
+    "duplicateSilent": "BUG-012",
+    "longNameSilent": "BUG-013",
+    "filterComboEmpty": "BUG-014"
+  },
+  "viewports": {
+    "fhd": {
+      "width": 1920,
+      "height": 1080
+    },
+    "hd": {
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "timeouts": {
+    "dialog": 15000,
+    "dropdown": 6000,
+    "shortAction": 800,
+    "validation": 1000,
+    "errorCheck": 2000,
+    "modalAnim": 500,
+    "toastDismiss": 5000,
+    "searchDebounce": 1000
+  }
+}

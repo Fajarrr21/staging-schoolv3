@@ -1,0 +1,85 @@
+{
+  "urls": {
+    "base": "https://staging-new-school.cazh.id",
+    "kamarList": "/setting/academic/room",
+    "login": "/auth/login"
+  },
+  "credentials": {
+    "email": "admin@cazh.id",
+    "password": "@GrahaTimur2026"
+  },
+  "instansi": {
+    "primary": "SDIT",
+    "secondary": "Sekolah Alam",
+    "empty": ""
+  },
+  "labels": {
+    "pageTitle": "Kamar",
+    "btnTambah": "Tambah Kamar",
+    "btnSimpan": "Simpan",
+    "btnBatal": "Batal",
+    "addTitle": "Tambah Kamar",
+    "editTitle": "Edit Kamar",
+    "deleteTitle": "Hapus Kamar",
+    "btnHapus": "Hapus",
+    "labelInstansi": "Instansi",
+    "labelKamar": "Kamar",
+    "labelLokasi": "Lokasi (Opsional)",
+    "labelPic": "PIC (Opsional)",
+    "placeholderName": "Contoh: Putra",
+    "placeholderInstansi": "Pilih Instansi",
+    "placeholderLokasi": "Masukkan lokasi Kamar",
+    "placeholderPic": "Tidak ada PIC",
+    "statusActive": "Aktif",
+    "statusInactive": "Tidak Aktif",
+    "searchPlaceholder": "Cari",
+    "emptyStateTitle": "Data Kamar tidak ditemukan",
+    "filterStatusAll": "Semua"
+  },
+  "messages": {
+    "instansiRequired": "Instansi wajib diisi",
+    "nameRequired": "Kamar wajib diisi",
+    "requiredGeneric": "wajib diisi",
+    "duplicateName": "sudah ada",
+    "addSuccess": "Kamar berhasil ditambahkan",
+    "editSuccess": "Kamar berhasil diperbarui",
+    "deleteSuccess": "Kamar berhasil dihapus"
+  },
+  "columns": {
+    "instansi": 0,
+    "nama": 1,
+    "lokasi": 2,
+    "pic": 3,
+    "status": 4,
+    "createdAt": 5,
+    "edit": 6,
+    "delete": 7
+  },
+  "testData": {
+    "prefix": "QA",
+    "spaceOnly": "     ",
+    "minName": "A",
+    "lokasiSample": "Lantai 2",
+    "longLokasi": "Gedung A Lantai 3 Sayap Kanan dekat tangga darurat",
+    "boundaries": {
+      "nameOverflow": 300
+    },
+    "noMatchSearch": "ZZZQA000NOTEXIST"
+  },
+  "viewports": {
+    "fhd": { "width": 1920, "height": 1080 },
+    "hd": { "width": 1280, "height": 720 }
+  },
+  "timeouts": {
+    "dialog": 15000,
+    "dropdown": 6000,
+    "settle": 1200,
+    "picLoad": 1000,
+    "shortAction": 800,
+    "validation": 1000,
+    "errorCheck": 2000,
+    "modalAnim": 500,
+    "toastDismiss": 5000,
+    "searchDebounce": 800
+  }
+}

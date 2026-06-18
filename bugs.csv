@@ -1,0 +1,106 @@
+Bug ID,Module,Title,Steps to Reproduce,Expected Result,Actual Result,Severity,Priority,Reporter,Status,Date Found
+BUG-001,Mata Pelajaran,Search by Instansi returns empty,"1. Login sebagai admin
+2. Navigate ke Pengaturan → Akademik → Mata Pelajaran
+3. Verify data Mapel ada di list (multiple instansi)
+4. Klik field 'Cari'
+5. Ketik nama instansi
+6. Tunggu hasil search","List ter-filter, nampilin row Mapel yang punya Instansi terkait keyword",Empty state muncul: 'Data tidak ditemukan' — padahal data jelas ada,Medium,P5,Fajar Ardiansyah,Open,10 Juni 2026
+BUG-002,Mata Pelajaran,Form state preserved after Batal,"1. Buka modal Tambah/Edit Mapel
+2. Isi field (cth: Nama Mapel = 'Matematika')
+3. Klik tombol 'Batal'
+4. Modal close
+5. Buka modal lagi (klik Tambah)",Modal terbuka dengan field kosong (state reset),Field masih ke-isi 'Matematika' — state dari interaksi sebelumnya persisted,Medium,P6,Fajar Ardiansyah,Open,10 Juni 2026
+BUG-003,Tahun Ajaran,Frontend silent on API 400 error (overlap),"1. Buka modal Tambah Tahun Ajaran
+2. Isi Tahun Awal & Tanggal Mulai yang OVERLAP dengan TA existing
+   (cth: kalo TA 2025/2026 dah ada, isi 2025 lagi)
+3. Klik Simpan
+4. Backend balikin HTTP 400 dengan error message
+5. Monitor UI","Toast error muncul OR inline error di field overlap, menjelaskan ke user kalo TA udah ada",UI SILENT — modal tetap terbuka tanpa indikasi error apapun. User gak tau kenapa Simpan-nya 'gak jalan',High,P2,Fajar Ardiansyah,Open,10 Juni 2026
+BUG-004,Tahun Ajaran,Search by Semester returns empty,"1. Login sebagai admin
+2. Navigate ke Pengaturan → Akademik → Tahun Ajaran
+3. Verify data ada (multiple TA dengan kolom Semester GANJIL/GENAP)
+4. Klik field 'Cari'
+5. Ketik 'Ganjil' (atau 'GANJIL' / 'ganjil')
+6. Tunggu hasil","List ter-filter, nampilin row dengan Semester = Ganjil (cth: 2 row dari 4 total)","List ke-clear total → empty state: 'Data Tahun Ajaran tidak ditemukan'.
+Berlaku untuk semua case: GANJIL / ganjil / Ganjil = SEMUA empty",Medium,P4,Fajar Ardiansyah,Open,10 Juni 2026
+BUG-005,Tahun Ajaran (Edit),Ubah field 'Tahun Awal' di modal Edit Tahun Ajaran merusak integritas data: semester pasangan jadi orphan & tanggal tidak ikut menyesuaikan,"1. Login sebagai admin
+2. Buka menu Tahun Ajaran (Pengaturan → Akademik)
+3. Klik Edit pada salah satu baris semester GENAP (contoh: 2003/2004 Genap)
+4. Ubah field 'Tahun Awal' dari 2003 menjadi 1999 (field 'Tahun Akhir' otomatis berubah jadi 2000)
+5. Klik Simpan
+6. Amati list Data Tahun Ajaran","Salah satu dari:
+(A) Field 'Tahun Awal' tidak dapat diubah (readonly) — TA yang salah cukup dihapus lalu dibuat ulang. [paling aman]
+(B) Bila edit tahun memang disediakan sebagai fitur, maka mengubah tahun HARUS:
+    1) memindahkan KEDUA semester (Ganjil & Genap) ke tahun baru sebagai satu kesatuan (tetap 1 TA = 2 baris),
+    2) menghitung ulang Tanggal Mulai & Tanggal Akhir kedua semester agar sesuai tahun baru,
+    3) menolak penyimpanan bila tahun tujuan sudah ada (cegah duplikat).","PROBLEM: Satu Tahun Ajaran direpresentasikan sebagai 2 baris (semester Ganjil + Genap) yang merupakan satu kesatuan. Saat user mengubah 'Tahun Awal' pada salah satu baris lalu menyimpan, sistem HANYA memperbarui baris yang sedang diedit. Akibatnya muncul 3 kerusakan:
+
+1) SIBLING JADI ORPHAN — Baris pasangannya tidak ikut pindah. Contoh: edit 2003/2004 Genap → 1999/2000 menghasilkan baris '1999/2000 Genap' yang berdiri sendiri, sedangkan '2003/2004 Ganjil' tetap di tahun lama. Satu TA utuh PECAH menjadi dua TA cacat yang masing-masing hanya punya 1 semester.
+
+2) TANGGAL TIDAK IKUT BERUBAH — Tanggal Mulai & Tanggal Akhir tetap memakai nilai tahun lama. Baris '1999/2000 Genap' tetap menampilkan 1 Desember 2003 – 31 Mei 2004. Label tahun (1999/2000) dan rentang tanggalnya (2003–2004) saling bertentangan.
+
+3) TIDAK ADA VALIDASI COLLISION — Tidak ada pengecekan apakah tahun tujuan sudah ada, sehingga berpotensi membuat TA duplikat.",High,P1,Fajar Ardiansyah,Open,11 Juni 2026
+BUG-006,Tahun Ajaran (Hapus),Frontend silent saat hapus TA berstatus Aktif — pesan error dari API tidak ditampilkan,"1. Login sebagai admin
+2. Buka menu Tahun Ajaran (Pengaturan → Akademik)
+3. Klik icon hapus (trash) pada baris semester berstatus AKTIF
+4. Konfirmasi 'Hapus' di dialog
+5. Monitor UI & response Network (XHR)","Muncul toast error berisi pesan dari API: 'Tidak dapat menghapus data karena data ini berstatus aktif', sehingga user paham kenapa data tidak terhapus.","API mengembalikan error dengan benar (HTTP response body: { status: false, message: 'Tidak dapat menghapus data karena data ini berstatus aktif', data: null }) dan data MEMANG tidak terhapus (proteksi backend bekerja). TAPI frontend SILENT — tidak ada toast/notifikasi apapun. User tidak tahu alasan kegagalan, mengira tombol Hapus tidak berfungsi. Akar masalah sama dengan BUG-003: frontend tidak menangkap & menampilkan message dari response error API.",Medium,P3,Fajar Ardiansyah,Open,11 Juni 2026
+BUG-007,Tingkat (Tambah),Frontend silent saat tambah Tingkat duplikat — pesan error dari API tidak ditampilkan,"1. Login sebagai admin
+2. Buka menu Tingkat (Pengaturan → Akademik → Tingkat)
+3. Klik 'Tambah Tingkat', pilih Instansi lalu isi nama Tingkat yang SUDAH ADA di instansi yang sama
+4. Klik Simpan
+5. Monitor UI & response Network (XHR)","Muncul toast/inline error berisi pesan dari API: 'Jenjang sekolah dengan nama tersebut sudah ada', sehingga user paham kenapa data tidak tersimpan.","API mengembalikan error dengan benar (response body: { status: false, message: 'Jenjang sekolah dengan nama tersebut sudah ada', data: null }) dan data MEMANG tidak tersimpan (proteksi backend bekerja). TAPI frontend SILENT — tidak ada toast/notifikasi apapun, modal tetap terbuka tanpa indikasi. User mengira tombol Simpan tidak berfungsi. Akar masalah sama dengan BUG-003 & BUG-006: frontend tidak menangkap & menampilkan message dari response error API.",Medium,P7,Fajar Ardiansyah,Open,12 Juni 2026
+BUG-008,Kelas (Tambah),Frontend silent saat tambah Kelas duplikat — pesan error dari API tidak ditampilkan,"1. Login sebagai admin
+2. Buka menu Kelas (Pengaturan → Akademik → Kelas)
+3. Klik 'Tambah Kelas', pilih Instansi lalu isi nama Kelas yang SUDAH ADA di instansi yang sama
+4. Klik Simpan
+5. Monitor UI & response Network (XHR)","Muncul toast/inline error berisi pesan dari API: 'Kelas dengan nama tersebut sudah ada di instansi ini', sehingga user paham kenapa data tidak tersimpan.","API mengembalikan error dengan benar (response body: { status: false, message: 'Kelas dengan nama tersebut sudah ada di instansi ini', data: null }) dan data MEMANG tidak tersimpan (proteksi backend bekerja). TAPI frontend SILENT — tidak ada toast/notifikasi apapun, modal tetap terbuka tanpa indikasi. User mengira tombol Simpan tidak berfungsi. Akar masalah sama dengan BUG-003, BUG-006 & BUG-007: frontend tidak menangkap & menampilkan message dari response error API.",Medium,P8,Fajar Ardiansyah,Open,13 Juni 2026
+BUG-009,Kelas (List / Filter),Filter kombinasi Instansi + Status mengembalikan 0 hasil padahal data ada,"1. Login sebagai admin
+2. Buka menu Kelas (Pengaturan → Akademik → Kelas)
+3. Pastikan ada kelas di Instansi SDIT berstatus Aktif
+4. Set filter Instansi = SDIT (data muncul normal)
+5. Tambahkan filter Status = Aktif
+6. Amati list & Network (XHR)",List menampilkan kelas yang cocok dengan KEDUA filter (Instansi SDIT & Status Aktif).,"List KOSONG — 'Data Kelas tidak ditemukan' (1-0 Dari 0). Padahal: URL sudah benar mengirim kedua parameter (?office=68ad284c0a04f100196aa4c3&status=ACTIVE), kedua chip filter aktif (Instansi: SDIT + Status: Aktif), dan request list 'school-classes?page=1&limit...' balik HTTP 200. Filter TUNGGAL bekerja normal (Instansi saja ATAU Status saja menampilkan data); hanya KOMBINASI keduanya yang balik kosong. Indikasi query kombinasi office+status di endpoint list tidak mengembalikan data yang seharusnya cocok (kemungkinan bug query/filter BE). Ditemukan via Cypress TC-LST-012 dan dikonfirmasi manual.",Medium,P9,Fajar Ardiansyah,Open,13 Juni 2026
+BUG-010,Kelas (Edit),Frontend silent saat edit nama Kelas jadi duplikat — pesan error dari API tidak ditampilkan,"1. Login sebagai admin
+2. Buka menu Kelas (Pengaturan → Akademik → Kelas)
+3. Pada salah satu kelas, klik Aksi > Edit
+4. Ubah nama Kelas menjadi nama yang SUDAH ADA di instansi yang sama
+5. Klik Simpan
+6. Monitor UI & response Network (XHR)","Muncul toast/inline error berisi pesan dari API: 'Kelas dengan nama tersebut sudah ada di instansi ini', sehingga user paham kenapa perubahan tidak tersimpan.","API mengembalikan error dengan benar (response body: { status: false, message: 'Kelas dengan nama tersebut sudah ada di instansi ini', data: null }) dan perubahan MEMANG tidak tersimpan (proteksi backend bekerja). TAPI frontend SILENT — tidak ada toast/notifikasi apapun, modal tetap terbuka tanpa indikasi. Akar masalah sama dengan BUG-003, BUG-006, BUG-007 & BUG-008: frontend tidak menangkap & menampilkan message dari response error API. Ini kemunculan pola yang sama pada modul Edit Kelas.",Medium,P10,Fajar Ardiansyah,Open,13 Juni 2026
+BUG-011,Kelas (Tambah/Edit & List),Nama Kelas tanpa batas panjang (no maxlength) + sel tabel tidak truncate → layout list jebol (overflow horizontal),"1. Login sebagai admin
+2. Buka menu Kelas (Pengaturan → Akademik → Kelas)
+3. Klik Tambah/Edit Kelas, isi nama sangat panjang (cth: 250+ karakter ""AAAA..."")
+4. Klik Simpan (tersimpan)
+5. Amati tampilan list","(A) Field Kelas punya batas maxlength yang wajar (cth ≤ 50–100 karakter) & menolak input berlebih.
+(B) Pada list, sel kolom Kelas nge-truncate (ellipsis) atau wrap, sehingga layout tabel tetap rapi dan tombol aksi tetap terjangkau.","Input MENERIMA nama 250 karakter tanpa batas/penolakan (data tersimpan). Di list, teks panjang OVERFLOW horizontal — menembus kolom ""Dibuat Pada"", menutupi tombol Edit & Hapus, dan melebarkan baris keluar dari area tabel. Layout tabel jebol. Tidak ada maxlength di input maupun truncation/ellipsis di sel tabel.",Low,P11,Fajar Ardiansyah,Open,14 Juni 2026
+BUG-012,Jurusan (Tambah),Duplikat Jurusan (nama + instansi sama) BERHASIL tersimpan — tidak ada uniqueness constraint di backend & frontend silent (melanggar PRD),"1. Login sebagai admin
+2. Buka menu Jurusan (Pengaturan → Akademik → Jurusan)
+3. Klik 'Tambah Jurusan', pilih Instansi, isi nama Jurusan (cth: 'RPL') → Simpan (sukses, 1 row)
+4. Klik 'Tambah Jurusan' lagi, pilih Instansi yang SAMA, isi nama yang PERSIS SAMA ('RPL')
+5. Klik Simpan
+6. Monitor UI, list, & response Network (XHR)","Sesuai PRD ('Ketika terdapat nama jurusan dengan instansi yang sama, sistem menampilkan pesan error'): muncul toast/inline error & data TIDAK dobel (tetap 1 row).","Data duplikat BERHASIL tersimpan → muncul 2 baris identik (nama + instansi sama). Tidak ada uniqueness constraint di backend dan frontend tidak menampilkan error apapun; modal menutup seolah sukses. BERBEDA dari BUG-007/008 (Tingkat/Kelas) yang backend-nya masih memproteksi (data tidak tersimpan) — di Jurusan proteksi backend TIDAK ADA sehingga data benar-benar dobel. Berisiko ambiguitas data untuk fitur downstream (jadwal, tugas, presensi, grup rapor, status PPDB, data diri siswa). Ditemukan via Cypress TC-JRS-ADD-010.",High,P12,Fajar Ardiansyah,Open,14 Juni 2026
+BUG-013,Jurusan (Tambah),Nama Jurusan tanpa maxlength/validasi panjang — input >255 char ditolak backend via RAW SQL error & frontend silent (no feedback + info leak),"1. Login sebagai admin
+2. Buka menu Jurusan (Pengaturan → Akademik → Jurusan)
+3. Klik 'Tambah Jurusan', pilih Instansi
+4. Isi nama Jurusan >255 karakter (cth: ~300 char)
+5. Klik Simpan
+6. Monitor UI & response Network (XHR)","FE membatasi/validasi maksimal 255 karakter (maxlength atau validasi inline) & menampilkan pesan ramah (cth: 'Jurusan maksimal 255 karakter'). Backend mengembalikan pesan validasi yang aman, bukan raw SQL error.","Tidak ada maxlength di field → input >255 char diteruskan ke backend. Backend menolak (data tidak tersimpan) TAPI mengembalikan RAW Postgres error: { status: false, message: 'ERROR: value too long for type character varying(255) (SQLSTATE 22001)', data: null }. Frontend SILENT — tidak ada toast/error apapun, user tidak dapat feedback. Selain UX buruk (pola sama BUG-003/006/007/008/010), raw SQL error membocorkan tipe & batas kolom DB + SQLSTATE ke client (info leak). Data tidak corrupt (tidak tersimpan). Ditemukan via Cypress TC-JRS-ADD-013.",Medium,P13,Fajar Ardiansyah,Open,14 Juni 2026
+BUG-014,Jurusan (List),Filter kombinasi Instansi + Status mengembalikan 0 data padahal data ada (BUG-009 ter-reproduce di Jurusan),"1. Login sebagai admin
+2. Buka menu Jurusan
+3. Filter Instansi = SDIT
+4. Filter Status = Aktif
+5. Amati list",Tampil jurusan yang ber-Instansi SDIT DAN status Aktif (datanya ADA).,List kosong / empty state padahal ada jurusan SDIT berstatus Aktif. Filter TUNGGAL (Instansi saja / Status saja) bekerja normal; hanya KOMBINASI keduanya yang balik 0. Pola sama persis BUG-009 (Kelas).,High,P14,Fajar Ardiansyah,Open,15 Juni 2026
+BUG-015,Kamar (Tambah),Nama Kamar tanpa maxlength/validasi panjang — input >255 char ditolak backend via RAW SQL error & frontend silent (no feedback + info leak),"1. Login sebagai admin
+2. Buka menu Kamar (Pengaturan → Akademik → Kamar) di /setting/academic/room
+3. Klik 'Tambah Kamar', pilih Instansi
+4. Isi nama Kamar >255 karakter (cth: ~300 char)
+5. Klik Simpan
+6. Monitor UI & response Network (XHR)","FE membatasi/validasi maksimal 255 karakter (maxlength atau validasi inline) & menampilkan pesan ramah (cth: 'Kamar maksimal 255 karakter'). Backend mengembalikan pesan validasi yang aman, bukan raw SQL error.","Tidak ada maxlength di field → input >255 char diteruskan ke backend. Backend menolak (data tidak tersimpan) TAPI mengembalikan RAW Postgres error: { status: false, message: 'ERROR: value too long for type character varying(255) (SQLSTATE 22001)', data: null }. Frontend SILENT — tidak ada toast sukses MAUPUN error, user tidak dapat feedback apapun, modal tetap terbuka. Selain UX buruk (pola sama BUG-003/006/007/008/010/013), raw SQL error membocorkan tipe & batas kolom DB + SQLSTATE ke client (info leak). Data tidak corrupt (tidak tersimpan). Ditemukan via Cypress TC-KMR-ADD-016.",Medium,P15,Fajar Ardiansyah,Open,18 Juni 2026
+BUG-016,Kamar (List / Filter),"Filter Status (Aktif/Tidak Aktif), tunggal maupun kombinasi dengan Instansi, menampilkan empty state padahal data ada","1. Login sebagai admin
+2. Buka menu Kamar (Pengaturan -> Akademik -> Kamar) di /setting/academic/room
+3. Pastikan ada kamar (mis. instansi SDIT berstatus Aktif) tampil normal tanpa filter
+4. Set filter Status = Aktif -> amati list
+5. Set filter Status = Tidak Aktif -> amati list
+6. Set filter Instansi = SDIT lalu tambah Status = Aktif (kombinasi) -> amati list
+7. Reset filter ke Semua -> amati list
+8. Monitor Network (XHR): parameter request & response body","List menampilkan kamar sesuai filter Status yang dipilih (Aktif menampilkan kamar Aktif, Tidak Aktif menampilkan kamar Tidak Aktif), termasuk saat dikombinasikan dengan filter Instansi.","Begitu filter Status diaktifkan, list langsung menampilkan empty state 'Data Kamar tidak ditemukan' padahal data jelas ada. Terjadi pada Status=Aktif, Status=Tidak Aktif, MAUPUN kombinasi Instansi+Status (URL mengirim parameter spt ?status=ACTIVE / ?status=INACTIVE dan ?office=...&status=ACTIVE). Data tidak hilang (muncul kembali begitu filter di-reset ke Semua), jadi ini bug query/handling filter status, bukan data corrupt. Pola sama BUG-009 (Kelas) & BUG-014 (Jurusan), NAMUN di Kamar lebih luas: filter Status TUNGGAL pun balik kosong, bukan hanya kombinasi. Ditemukan via Cypress TC-KMR-LST-006 (Aktif), TC-KMR-LST-008 (Tidak Aktif) & TC-KMR-LST-009 (kombinasi) + dikonfirmasi manual.",Medium,P16,Fajar Ardiansyah,Open,18 Juni 2026
