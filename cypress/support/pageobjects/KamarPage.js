@@ -106,6 +106,15 @@ class KamarPage {
     return this;
   }
 
+  // pilih PIC berdasarkan teks (termasuk placeholder "Tidak ada PIC" untuk menghapus PIC)
+  selectPic(value) {
+    this.elements.picTrigger().should('be.visible').and('not.be.disabled').click();
+    this.elements.listbox().should('be.visible');
+    this.elements.selectOption(value).should('be.visible').click({ force: true });
+    this.elements.picValue().should('contain.text', value);
+    return this;
+  }
+
   // buka dropdown PIC (trigger enabled hanya setelah Instansi dipilih)
   openPicDropdown() {
     this.elements.picTrigger().should('be.visible').and('not.be.disabled').click();
@@ -178,22 +187,52 @@ class KamarPage {
   openDeleteByName(name) {
     this.search(name);
     this.elements.rowByName(name).should('be.visible');
-    this.elements.deleteIcon(name).should('be.visible').and('not.be.disabled').click();
-    this.elements.dialog().should('be.visible');
-    this.elements.dialogTitle().should('be.visible');
+    cy.wait(500); // beri waktu re-render tabel selesai (anti detached-DOM)
+    this.elements.deleteIcon(name).scrollIntoView();
+    this.elements.deleteIcon(name).should('be.visible').and('not.be.disabled');
+    this.elements.deleteIcon(name).click({ force: true });
+    // tunggu dialog Hapus benar-benar OPEN (data-state) sebelum lanjut
+    cy.get(`${DIALOG}[data-state="open"]`, { timeout: 15000 }).should('be.visible');
+    this.elements.dialogTitle().should('contain.text', 'Hapus Kamar');
     cy.wait(SETTLE);
     return this;
   }
   confirmDelete() { this.elements.deleteConfirmBtn().click(); return this; }
   deleteByName(name) { this.openDeleteByName(name); this.confirmDelete(); return this; }
 
+  // tutup popup pakai ESC (Radix dialog listen ke document-level keydown)
+  pressEscape() { cy.get('body').type('{esc}'); return this; }
+
+  // pastikan popup konfirmasi Hapus menampilkan nama kamar + instansi (PRD: pesan konfirmasi)
+  assertDeleteDialogShows(name, instansi) {
+    this.elements.dialog().should(($d) => {
+      const txt = $d.text();
+      expect(txt, 'pesan konfirmasi memuat nama kamar').to.contain(name);
+      expect(txt, 'pesan konfirmasi memuat instansi').to.contain(instansi);
+    });
+    return this;
+  }
+
   openEditByName(name) {
     this.search(name);
+    // tunggu row hadir & beri waktu re-render tabel selesai (anti detached-DOM saat click)
     this.elements.rowByName(name).should('be.visible');
-    this.elements.editIcon(name).should('be.visible').and('not.be.disabled').click();
-    this.elements.dialog().should('be.visible');
-    this.elements.dialogTitle().should('be.visible');
+    cy.wait(500);
+    // re-query editIcon biar Cypress retry chain dengan referensi DOM terbaru
+    this.elements.editIcon(name).scrollIntoView();
+    this.elements.editIcon(name).should('be.visible').and('not.be.disabled');
+    this.elements.editIcon(name).click({ force: true });
+    // tunggu dialog Edit benar-benar OPEN (lebih kuat dari sekedar 'visible')
+    cy.get(`${DIALOG}[data-state="open"]`, { timeout: 15000 }).should('be.visible');
+    this.elements.dialogTitle().should('contain.text', 'Edit Kamar');
+    // form Edit punya 5 field: Instansi, Kamar, Lokasi, PIC, Status.
+    //   Render bertahap karena instansi pre-populated -> fetch PIC async.
+    //   TUNGGU semua field ter-mount sebelum lanjut (anti race formItem('PIC'/'Status')).
+    cy.get(`${DIALOG} form [data-slot="form-item"]`, { timeout: 10000 }).should('have.length', 5);
     cy.wait(SETTLE);
+    this.elements.kamarInput().should('be.visible').and('not.be.disabled');
+    // PIC dropdown butuh fetch guru/staff (walau instansi pre-selected)
+    cy.wait(PIC_WAIT);
     return this;
   }
 
@@ -288,6 +327,18 @@ class KamarPage {
   assertRowLokasi(name, lokasi) {
     this.elements.rowByName(name).should(($row) => {
       expect(Cypress.$($row).find('td').eq(2).text().trim()).to.eq(lokasi);
+    });
+    return this;
+  }
+  assertRowNoLokasi(name) {
+    this.elements.rowByName(name).should(($row) => {
+      expect(Cypress.$($row).find('td').eq(2).text().trim()).to.eq('');
+    });
+    return this;
+  }
+  assertRowNoPic(name) {
+    this.elements.rowByName(name).should(($row) => {
+      expect(Cypress.$($row).find('td').eq(3).text().trim()).to.eq('');
     });
     return this;
   }

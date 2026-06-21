@@ -1,0 +1,103 @@
+{
+  "urls": {
+    "base": "https://staging-new-school.cazh.id",
+    "tagList": "/setting/academic/tag",
+    "login": "/auth/login"
+  },
+  "credentials": {
+    "email": "admin@cazh.id",
+    "password": "@GrahaTimur2026"
+  },
+  "instansi": {
+    "primary": "SDIT",
+    "secondary": "Sekolah Alam",
+    "empty": ""
+  },
+  "tipeAnggota": {
+    "semua": "Semua",
+    "siswa": "Siswa",
+    "guruStaff": "Guru & Staff"
+  },
+  "labels": {
+    "pageTitle": "Tag",
+    "btnTambah": "Tambah Tag",
+    "btnSimpan": "Simpan",
+    "btnBatal": "Batal",
+    "addTitle": "Tambah Tag",
+    "editTitle": "Edit Tag",
+    "deleteTitle": "Hapus Tag",
+    "btnHapus": "Hapus",
+    "labelInstansi": "Instansi",
+    "labelNama": "Nama Tag",
+    "labelKode": "Kode Tag",
+    "labelTipe": "Tipe Anggota",
+    "placeholderNama": "Contoh: Beasiswa Sekolah",
+    "placeholderKode": "Contoh: PRI001",
+    "placeholderInstansi": "Pilih Instansi",
+    "placeholderTipe": "Pilih Tipe Anggota",
+    "statusActive": "Aktif",
+    "statusInactive": "Tidak Aktif",
+    "searchPlaceholder": "Cari",
+    "emptyStateTitle": "Data Tag tidak ditemukan",
+    "filterStatusAll": "Semua"
+  },
+  "filter": {
+    "buttonText": "Filter",
+    "labels": {
+      "instansi": "Instansi",
+      "status": "Status",
+      "tipeAnggota": "Tipe Anggota"
+    },
+    "options": {
+      "statusAll": "Semua",
+      "statusActive": "Aktif",
+      "statusInactive": "Tidak Aktif",
+      "tipeAll": "Semua"
+    }
+  },
+  "messages": {
+    "instansiRequired": "Instansi wajib diisi",
+    "namaRequired": "Nama Tag wajib diisi",
+    "kodeRequired": "Kode Tag wajib diisi",
+    "tipeRequired": "Tipe Anggota wajib diisi",
+    "requiredGeneric": "wajib diisi",
+    "duplicateCode": "Kode tag sudah digunakan di instansi ini",
+    "addSuccess": "Tag berhasil ditambahkan",
+    "editSuccess": "Tag berhasil diperbarui",
+    "deleteSuccess": "Tag berhasil dihapus"
+  },
+  "columns": {
+    "instansi": 0,
+    "nama": 1,
+    "kode": 2,
+    "tipe": 3,
+    "status": 4,
+    "createdAt": 5,
+    "edit": 6,
+    "delete": 7
+  },
+  "testData": {
+    "prefix": "QA",
+    "spaceOnly": "     ",
+    "minName": "A",
+    "boundaries": {
+      "nameOverflow": 300
+    },
+    "noMatchSearch": "ZZZQA000NOTEXIST"
+  },
+  "viewports": {
+    "fhd": { "width": 1920, "height": 1080 },
+    "hd": { "width": 1280, "height": 720 }
+  },
+  "timeouts": {
+    "dialog": 15000,
+    "dropdown": 6000,
+    "settle": 1200,
+    "shortAction": 800,
+    "validation": 1000,
+    "errorCheck": 2000,
+    "modalAnim": 500,
+    "toastDismiss": 5000,
+    "searchDebounce": 800
+  }
+}

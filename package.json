@@ -15,11 +15,16 @@
     "report:generate": "marge cypress/reports/merged.json -o cypress/reports --inline",
     "report:build": "npm run report:merge && npm run report:generate",
     "test": "run-s report:clean cy:run --continue-on-error report:build",
-    "test:mapel": "npm run report:clean && npx cypress run --spec \"cypress/e2e/stagingv3/pengaturan mapel/*.cy.js\" & npm run report:build",
-    "test:mapel:tambah": "npm run report:clean && npx cypress run --spec \"cypress/e2e/stagingv3/pengaturan mapel/tambahmapel.cy.js\" & npm run report:build",
-    "test:mapel:edit": "npm run report:clean && npx cypress run --spec \"cypress/e2e/stagingv3/pengaturan mapel/editmapel.cy.js\" & npm run report:build",
-    "test:mapel:hapus": "npm run report:clean && npx cypress run --spec \"cypress/e2e/stagingv3/pengaturan mapel/hapusmapel.cy.js\" & npm run report:build",
-    "test:mapel:list": "npm run report:clean && npx cypress run --spec \"cypress/e2e/stagingv3/pengaturan mapel/listmapel.cy.js\" & npm run report:build"
+    "test:mapel": "npm run report:clean && npx cypress run --spec \"cypress/e2e/stagingv3/Pengaturan/Pengaturan Akademik/pengaturan mapel/*.cy.js\" & npm run report:build",
+    "test:mapel:tambah": "npm run report:clean && npx cypress run --spec \"cypress/e2e/stagingv3/Pengaturan/Pengaturan Akademik/pengaturan mapel/tambahmapel.cy.js\" & npm run report:build",
+    "test:mapel:edit": "npm run report:clean && npx cypress run --spec \"cypress/e2e/stagingv3/Pengaturan/Pengaturan Akademik/pengaturan mapel/editmapel.cy.js\" & npm run report:build",
+    "test:mapel:hapus": "npm run report:clean && npx cypress run --spec \"cypress/e2e/stagingv3/Pengaturan/Pengaturan Akademik/pengaturan mapel/hapusmapel.cy.js\" & npm run report:build",
+    "test:mapel:list": "npm run report:clean && npx cypress run --spec \"cypress/e2e/stagingv3/Pengaturan/Pengaturan Akademik/pengaturan mapel/listmapel.cy.js\" & npm run report:build",
+    "test:tag": "npm run report:clean && npx cypress run --spec \"cypress/e2e/stagingv3/Pengaturan/Pengaturan Akademik/pengaturan tag/*.cy.js\" & npm run report:build",
+    "test:tag:tambah": "npm run report:clean && npx cypress run --spec \"cypress/e2e/stagingv3/Pengaturan/Pengaturan Akademik/pengaturan tag/tambahtag.cy.js\" & npm run report:build",
+    "test:tag:list": "npm run report:clean && npx cypress run --spec \"cypress/e2e/stagingv3/Pengaturan/Pengaturan Akademik/pengaturan tag/listtag.cy.js\" & npm run report:build",
+    "test:tag:edit": "npm run report:clean && npx cypress run --spec \"cypress/e2e/stagingv3/Pengaturan/Pengaturan Akademik/pengaturan tag/edittag.cy.js\" & npm run report:build",
+    "test:tag:hapus": "npm run report:clean && npx cypress run --spec \"cypress/e2e/stagingv3/Pengaturan/Pengaturan Akademik/pengaturan tag/hapustag.cy.js\" & npm run report:build"
   },
   "devDependencies": {
     "cypress": "^14.0.2",

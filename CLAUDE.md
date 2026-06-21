@@ -9,7 +9,7 @@ Cypress E2E test suite for the CARDS School staging app (`https://staging-new-sc
 - Only the `cypress/e2e/stagingv3/**/*.cy.{js,ts}` folder is scanned (see `specPattern` in `cypress.config.js`). The `1-getting-started` and `2-advanced-examples` folders are ignored.
 - `npm run cy:open` — interactive runner. `npm run cy:run` — headless.
 - `npm test` — full pipeline: clean reports → run all → build mochawesome HTML report (in `cypress/reports/`).
-- Run one module via the dedicated scripts, e.g. `npm run test:mapel`, or a single spec: `npx cypress run --spec "cypress/e2e/stagingv3/pengaturan mapel/tambahmapel.cy.js"`.
+- Run one module via the dedicated scripts, e.g. `npm run test:mapel`, or a single spec: `npx cypress run --spec "cypress/e2e/stagingv3/Pengaturan/Pengaturan Akademik/pengaturan mapel/tambahmapel.cy.js"`.
 - `retries: 0` in both run and open modes — a flaky failure is a real failure, do not assume re-running fixes it.
 
 ## Git

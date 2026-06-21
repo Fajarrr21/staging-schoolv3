@@ -101,15 +101,24 @@ ROWS = [
      "PRD", "Belum dijalankan", ""],
 
     ["TC-KMR-LST-011", "Positif",
+     "Cari by Instansi",
+     "Ada kamar di sebuah instansi (mis. SDIT)",
+     "1) Seed kamar instansi SDIT\n2) Ketik nama instansi di Cari\n3) Amati hasil",
+     "Keyword=SDIT",
+     "Hasil memuat kamar instansi tsb",
+     "PRD", "FAIL",
+     "BUG-018: search by Instansi balik empty padahal data ada (dikonfirmasi manual, pola BUG-001 Mapel). Search by Nama normal"],
+
+    ["TC-KMR-LST-012", "Positif",
      "Cari by PIC",
      "Ada kamar dgn PIC terisi (guru instansi)",
      "1) Seed kamar + pilih PIC (guru pertama)\n2) Ketik nama PIC di Cari\n3) Amati hasil",
      "Keyword=<nama PIC seed>",
      "Hasil memuat kamar dgn PIC tsb",
-     "PRD", "Belum dijalankan",
-     "Bergantung instansi punya guru; bila SDIT tak punya guru -> tahap PIC di-skip"],
+     "PRD", "FAIL",
+     "BUG-017: search by PIC balik empty padahal data ada (dikonfirmasi manual). Search by Nama normal; hanya by PIC rusak"],
 
-    ["TC-KMR-LST-012", "Edge",
+    ["TC-KMR-LST-013", "Edge",
      "Cari case-insensitive (huruf kecil) menemukan data",
      "Ada kamar dgn nama unik",
      "1) Seed kamar nama unik (uppercase QA...)\n2) Ketik versi huruf kecil di Cari\n3) Amati hasil",
@@ -118,7 +127,7 @@ ROWS = [
      "Asumsi", "Belum dijalankan",
      "PRD tak eksplisit soal case-insensitive -> asumsi konvensi modul lain"],
 
-    ["TC-KMR-LST-013", "Negatif",
+    ["TC-KMR-LST-014", "Negatif",
      "Cari keyword tidak ada -> halaman kosong",
      "List Kamar terbuka",
      "1) Ketik keyword acak yang pasti tak match\n2) Amati hasil",
@@ -126,7 +135,7 @@ ROWS = [
      "Tidak ada baris; tampil halaman kosong (empty state)",
      "PRD", "Belum dijalankan", ""],
 
-    ["TC-KMR-LST-014", "Positif",
+    ["TC-KMR-LST-015", "Positif",
      "Clear search -> list kembali tampil penuh",
      "Sudah melakukan search",
      "1) Seed kamar\n2) Search nama tsb\n3) Kosongkan kolom Cari\n4) Amati list",
@@ -135,7 +144,7 @@ ROWS = [
      "PRD", "Belum dijalankan", ""],
 
     # ---------------- EDGE ----------------
-    ["TC-KMR-LST-015", "Edge",
+    ["TC-KMR-LST-016", "Edge",
      "Cari pakai teks Lokasi -> TIDAK menemukan (Lokasi bukan kriteria search)",
      "Ada kamar dgn Lokasi unik",
      "1) Seed kamar + Lokasi unik\n2) Ketik teks Lokasi tsb di Cari\n3) Amati hasil",
@@ -163,6 +172,8 @@ LEGEND = [
     ["", ""],
     ["Bug ditemukan", ""],
     ["BUG-016", "Filter Status (Aktif/Tidak Aktif), tunggal & kombinasi, balik empty padahal data ada. Pola BUG-009/014 tapi lebih luas (filter status tunggal pun rusak). Lihat TC-006/008/009"],
+    ["BUG-017", "Search/cari by PIC balik empty state padahal data ada (pola BUG-001 Mapel). Hanya by PIC; search by Nama normal. Lihat TC-012"],
+    ["BUG-018", "Search/cari by Instansi balik empty state padahal data ada (pola BUG-001 Mapel). Search by Nama normal. Lihat TC-011"],
     ["Catatan", "Tanpa kategori security/injection (sesuai kesepakatan)"],
 ]
 
