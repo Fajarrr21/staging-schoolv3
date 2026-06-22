@@ -1,0 +1,79 @@
+{
+  "urls": {
+    "base": "https://staging-new-school.cazh.id",
+    "kalenderList": "/setting/academic/academic-calendar",
+    "login": "/auth/login"
+  },
+  "credentials": {
+    "email": "admin@cazh.id",
+    "password": "@GrahaTimur2026"
+  },
+  "instansi": {
+    "primary": "SMP Digital Indonesia+",
+    "secondary": "SD Digital Indonesia",
+    "tertiary": "MI Digital Indonesia",
+    "existing": "SMA Digital Indonesia"
+  },
+  "labels": {
+    "pageTitle": "Data Kalender Akademik",
+    "btnTambah": "Tambah Kalender Akademik",
+    "btnSimpan": "Simpan",
+    "btnBatal": "Batal",
+    "addTitle": "Tambah Kalender Akademik",
+    "editTitle": "Edit Kalender Akademik",
+    "deleteTitle": "Hapus Kalender Akademik",
+    "labelInstansi": "Instansi",
+    "labelAwalPekan": "Awal pekan dimulai",
+    "labelNamaPekan": "Nama Pekan",
+    "labelHeader": "Header (Opsional)",
+    "placeholderInstansi": "Pilih Instansi",
+    "placeholderAwalPekan": "Pilih Awal pekan dimulai",
+    "placeholderNamaPekan": "Pilih Nama Pekan",
+    "btnPilihFile": "Pilih File",
+    "tipUkuran": "Ukuran 500 X 300 Pixel",
+    "tipFormat": "Format File jpg, jpeg, png",
+    "tipMaxSize": "Ukuran Maksimal : 2 MB"
+  },
+  "options": {
+    "awalPekan": ["Minggu", "Senin"],
+    "namaPekan": ["Ahad", "Minggu"]
+  },
+  "messages": {
+    "instansiRequired": "Instansi wajib diisi",
+    "awalPekanRequired": "Awal pekan dimulai wajib diisi",
+    "namaPekanRequired": "Nama Pekan wajib diisi",
+    "uploadOversizeTitle": "Gagal mengunggah file",
+    "uploadOversizeDesc": "File melebihi ukuran maksimal 2MB.",
+    "addSuccess": "Kalender Akademik berhasil ditambahkan",
+    "editSuccess": "Kalender Akademik berhasil diperbarui",
+    "deleteSuccess": "Kalender Akademik berhasil dihapus",
+    "duplicate": "Pengaturan kalender untuk office ini sudah ada"
+  },
+  "assets": {
+    "headerValid": "cypress/fixtures/kalender/header-valid.jpg",
+    "headerOversize": "cypress/fixtures/kalender/header-oversize.jpg",
+    "samplePdf": "cypress/fixtures/kalender/sample.pdf",
+    "fallbackNonImage": "package.json"
+  },
+  "columns": {
+    "instansi": 0,
+    "awalPekan": 1,
+    "namaPekan": 2,
+    "header": 3,
+    "edit": 4,
+    "delete": 5
+  },
+  "viewports": {
+    "fhd": { "width": 1920, "height": 1080 },
+    "hd": { "width": 1280, "height": 720 }
+  },
+  "timeouts": {
+    "dialog": 15000,
+    "dropdown": 6000,
+    "settle": 1200,
+    "upload": 3000,
+    "shortAction": 800,
+    "validation": 1000,
+    "toast": 8000
+  }
+}

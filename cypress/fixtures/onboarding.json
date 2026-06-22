@@ -1,0 +1,76 @@
+{
+  "urls": {
+    "base": "https://staging.cards.co.id",
+    "daftarAkun": "/daftar-akun",
+    "masuk": "/masuk",
+    "verifikasiOtp": "/verifikasi-otp"
+  },
+  "labels": {
+    "h1Title": "Daftar",
+    "subtitle": "Sudah punya akun?",
+    "subtitleLink": "Masuk",
+    "btnSubmit": "Buat Akun",
+    "btnSubmitLoading": "Membuat akun...",
+    "btnGoogle": "Daftar dengan Google",
+    "googleTooltip": "Login Google segera hadir",
+    "helperTips": "Tips: Password minimal 8 karakter dengan huruf besar, kecil, dan angka.",
+    "strengthPrefix": "Kekuatan password:",
+    "strengthLemah": "Lemah",
+    "strengthSedang": "Sedang",
+    "strengthKuat": "Kuat",
+    "eyeAriaLabelShow": "Tampilkan password"
+  },
+  "messages": {
+    "nameMinLength": "Nama minimal 3 karakter",
+    "phoneInvalid": "Nomor HP tidak valid (10–13 digit angka)",
+    "emailInvalid": "Format email tidak valid",
+    "passwordComplex": "Password minimal 8 karakter dan harus mengandung kombinasi huruf besar, kecil, serta angka."
+  },
+  "selectors": {
+    "nameInput": "#reg-name",
+    "phoneInput": "#reg-phone",
+    "emailInput": "#reg-email",
+    "passwordInput": "#reg-pw",
+    "submitBtn": "button[type=\"submit\"]",
+    "googleBtn": "button[title=\"Login Google segera hadir\"]",
+    "errorMessage": "p.text-pink-600",
+    "errorIcon": "svg.text-pink-500",
+    "strengthContainer": "div.mt-2",
+    "strengthLemahColor": "span.text-red-500",
+    "strengthSedangColor": "span.text-yellow-600",
+    "strengthKuatColor": "span.text-green-600",
+    "spinner": "span.animate-spin",
+    "subtitleLink": "a[href=\"/masuk\"]",
+    "helperTipsText": "p.text-slate-400"
+  },
+  "testData": {
+    "emailPrefix": "qa.cards.school",
+    "emailDomain": "@gmail.com",
+    "phonePrefix": "0812",
+    "validName": "Qa Cards Test",
+    "minName": "Fai",
+    "shortName": "Ab",
+    "whitespaceName": "   ",
+    "passwordWeakValid": "Qwerty12",
+    "passwordMediumValid": "Qwerty1234",
+    "passwordStrongValid": "CardsSchool2026!",
+    "passwordShort": "Qwer123",
+    "passwordNoUpper": "qwerty12",
+    "passwordNoLower": "QWERTY12",
+    "passwordNoDigit": "Qwertyab",
+    "phoneShort": "081234567",
+    "phoneLong": "08123456789012",
+    "phoneMin": "0812345678",
+    "phoneMax": "0812345678901",
+    "phoneNonNumeric": "081abc-2345!@",
+    "emailNoAt": "qa.cards.school",
+    "emailNoDomain": "qa.cards@",
+    "emailWithSpaces": "  qa.cards.school@gmail.com  "
+  },
+  "timeouts": {
+    "pageLoad": 15000,
+    "validation": 2000,
+    "submit": 10000,
+    "redirect": 8000
+  }
+}
