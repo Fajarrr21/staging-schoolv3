@@ -192,7 +192,7 @@ describe('Pengaturan Mata Pelajaran - Fajar Ardiansyah', () => {
 
   // ============================================================
   // S-04 — Duplikasi Nama Mata Pelajaran
-  // ⚠️ PRE-CONDITION: Data 'pjok' sudah ada di SMP Digital Indonesia+
+  // ⚠️ PRE-CONDITION: Data 'Matematika' sudah ada di Yayasan New School (v3 seed)
   // ============================================================
   describe('S-04 — Duplikasi Nama Mata Pelajaran', () => {
 

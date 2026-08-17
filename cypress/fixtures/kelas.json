@@ -1,16 +1,16 @@
 {
   "urls": {
-    "base": "https://staging-new-school.cazh.id",
+    "base": "https://v3.cazh.id",
     "kelasList": "/setting/academic/class",
     "login": "/auth/login"
   },
   "credentials": {
-    "email": "admin@cazh.id",
-    "password": "@GrahaTimur2026"
+    "email": "androidtesting117@gmail.com",
+    "password": "f7ki6b2u"
   },
   "instansi": {
-    "primary": "SDIT",
-    "secondary": "Sekolah Alam",
+    "primary": "Yayasan New School",
+    "secondary": "Sekolah Digital Indonesia",
     "empty": ""
   },
   "labels": {

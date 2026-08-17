@@ -1,3 +1,8 @@
+// Endpoint login — terverifikasi, sudah dipakai spec tingkat & tahun ajaran
+// (`cy.intercept('POST', '**/api/auth/login')`). Juga ada di fixture: login.json -> api.login
+const API_LOGIN = '**/api/auth/login';
+const DASHBOARD_PATH = '/dashboard';
+
 class LoginPage {
   elements = {
     emailInput: () => cy.get('input[name="email"]'),
@@ -61,19 +66,47 @@ class LoginPage {
   }
 
   /**
-   * Login via cy.session dengan URL-based validation (lebih reliable)
-   * Gak depend pada userAvatar selector yang bisa berubah
+   * Login via cy.session dengan URL-based validation (lebih reliable).
+   * Gak depend pada userAvatar selector yang bisa berubah.
+   *
+   * FIX-002 — ada opsi `validate()`. Tanpa ini, sesi yang tokennya sudah mati tetap
+   *   dipulihkan dari cache dan spec gagal dengan error selector yang menyesatkan.
+   *   Validasinya lewat URL: kalau sesi mati, app melempar balik ke halaman login.
+   *   (Jangan tiru qa-cazh yang cuma cek body tidak memuat teks tertentu — halaman
+   *   login juga tidak memuat teks itu, jadi validasinya bocor.)
+   *
+   * FIX-003 — `cy.wait(1000)` diganti `cy.wait('@loginAPI')`. Sekarang yang ditunggu
+   *   response login yang sebenarnya, bukan jeda tebakan. Pola ini diangkat dari spec
+   *   tingkat & tahun ajaran yang sudah memakainya inline.
+   *
+   * @param {object} opts - { redirect, dashboard, apiLogin } — semua opsional
    */
-  loginViaSession(email, password, baseUrl, loginPath) {
-    cy.session(`session-${email}`, () => {
-      cy.visit(`${baseUrl}${loginPath}`);
-      this.elements.emailInput().type(email);
-      this.elements.passwordInput().type(password);
-      this.elements.submitBtn().click();
-      // Validate login sukses pakai URL check (paling reliable)
-      cy.url({ timeout: 15000 }).should('not.include', loginPath);
-      cy.wait(1000); // wait app stabilize
-    });
+  loginViaSession(email, password, baseUrl, loginPath, opts = {}) {
+    const redirect = opts.redirect || 15000;
+    const dashboard = opts.dashboard || DASHBOARD_PATH;
+    const apiLogin = opts.apiLogin || API_LOGIN;
+
+    cy.session(
+      `session-${email}`,
+      () => {
+        cy.intercept('POST', apiLogin).as('loginAPI');
+        cy.visit(`${baseUrl}${loginPath}`);
+        this.elements.emailInput().should('be.visible').clear().type(email);
+        this.elements.passwordInput().should('be.visible').clear().type(password, { log: false });
+        this.elements.submitBtn().should('be.enabled').click();
+
+        cy.wait('@loginAPI', { timeout: redirect })
+          .its('response.statusCode')
+          .should('eq', 200);
+        cy.url({ timeout: redirect }).should('not.include', loginPath);
+      },
+      {
+        validate() {
+          cy.visit(`${baseUrl}${dashboard}`, { failOnStatusCode: false });
+          cy.url({ timeout: redirect }).should('not.include', loginPath);
+        },
+      },
+    );
     return this;
   }
 

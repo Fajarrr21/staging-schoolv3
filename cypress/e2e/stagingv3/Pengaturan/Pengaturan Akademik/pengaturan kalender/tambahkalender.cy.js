@@ -4,15 +4,17 @@
 // Konvensi: reuse cy.session via LoginPage.loginViaSession.
 // Semua label/message/instansi/asset path dibaca dari fixture kalender.json.
 //
-// CATATAN RERUN-SAFETY:
-//   Kalender ter-Tambah per instansi (1:1). Setelah TC-001/TC-002 sukses, instansi target sudah punya
-//   kalender -> run kedua akan FAIL dengan toast duplikat. Solusi temporary: pakai 3 instansi berbeda
-//   utk 3 happy/positif yg save (TC-001=tertiary, TC-002=secondary, TC-016 follow TC-002).
-//   Cleanup permanen menyusul setelah modul Hapus + utility cleanup tersedia.
+// CATATAN RERUN-SAFETY (v3):
+//   Kalender ter-Tambah per instansi (1:1). v3 cuma punya 4 instansi (YNS/SDI/AQE/AC) —
+//   YNS+SDI SEED PERMANEN (jangan modif), AQE=primary mutation, AC=sandbox destruktif.
+//   TC-001 pake tertiary=AC (perlu clean di awal — pakai delete-first guard).
+//   TC-002 pake primary=AQE dgn delete-first guard (biar rerun-safe).
+//   TC-016 assert persist AC (state left by TC-001, sebelum TC-002 pindah target ke AQE).
+//   Rerun caveat: AC populated di akhir spec — cleanup via afterAll delete kalau ada.
 //
 // CATATAN FILE UPLOAD:
 //   File asset di-host user di `cypress/fixtures/kalender/`:
-//     - header-valid.jpg     (<2MB, untuk TC-002/005/015)
+//     - header-valid.png     (<2MB, untuk TC-002/005/015)
 //     - header-oversize.jpg  (>2MB, untuk TC-013)
 //     - sample.pdf           (untuk TC-014; fallback ke package.json kalau tidak tersedia)
 //   Bila file tidak ada -> Cypress error jelas. User harus siapkan file dulu sebelum run TC tsb.
@@ -32,28 +34,81 @@ describe('Kalender Akademik — Tambah (CARDS School)', () => {
     kalender.visit();
   });
 
+  // Cleanup afterAll: hapus kalender di tertiary=AC (dari TC-001/016) biar rerun clean.
+  after(() => {
+    kalender.visit();
+    cy.get('table tbody').then(($b) => {
+      if ($b.text().includes(d.instansi.tertiary)) {
+        kalender.openDeleteDialog(d.instansi.tertiary);
+        kalender.clickConfirmDelete();
+      }
+    });
+  });
+
   // ---------- HAPPY ----------
   it('TC-KLD-ADD-001 | Happy | Tambah field wajib minimum (tanpa header)', () => {
-    // Pakai instansi tertiary (MI Digital Indonesia) — pool kosong untuk Tambah happy ke-1
+    // tertiary=Academy Cazh, pool sandbox. Delete-first guard biar rerun-safe.
     const instansi = d.instansi.tertiary;
+    kalender.isInstansiInList(instansi).then((exists) => {
+      if (exists) {
+        kalender.openDeleteDialog(instansi);
+        kalender.clickConfirmDelete();
+        kalender.assertDeleteSuccessToast();
+        kalender.assertModalClosed();
+      }
+    });
     kalender.addKalender(instansi, 'Minggu', 'Ahad');
     kalender.assertSuccessToast(d.messages.addSuccess);
     kalender.assertModalClosed();
     kalender.assertRowExists(instansi);
     kalender.assertRowAwalPekan(instansi, 'Minggu');
     kalender.assertRowNamaPekan(instansi, 'Ahad');
-    kalender.assertRowHeaderImage(instansi); // default header tetap berupa img (URL default app)
+    // Tanpa upload header -> col 3 = "-" (placeholder), bukan default img
+    kalender.assertRowNoHeader(instansi);
   });
 
-  it('TC-KLD-ADD-002 | Happy | Tambah lengkap (3 field wajib + upload foto <2MB)', () => {
-    const instansi = d.instansi.secondary;
-    kalender.addKalender(instansi, 'Senin', 'Minggu', { header: d.assets.headerValid });
+  // TC-016 pindah ke sini biar chain dgn TC-001 (assert persist state left by TC-001).
+  // TC-002 nanti pindah target ke primary=AQE, jadi state AC dari TC-001 tetap intact.
+  it('TC-KLD-ADD-016 | Edge | Persistence: reload -> data Tambah tetap ada', () => {
+    // Pre-cond: TC-001 sudah sukses Tambah AC (Minggu/Ahad tanpa header).
+    // Kalau TC-001 fail/skip -> TC-016 fail by design (signal urutan rusak).
+    const instansi = d.instansi.tertiary;
+    kalender.assertPersisted(instansi);
+    kalender.assertRowAwalPekan(instansi, 'Minggu');
+    kalender.assertRowNamaPekan(instansi, 'Ahad');
+    kalender.assertRowNoHeader(instansi);
+  });
+
+  it('TC-KLD-ADD-002 | Happy | Tambah lengkap (3 field wajib + upload foto <2MB) [BUG-026]', () => {
+    // BUG-026: Upload header (foto <2MB) sukses simpan (toast + modal close) tapi tidak
+    // ter-persist di list — kolom Header (col-4) menampilkan "-" bukan <img>.
+    // TC SENGAJA FAIL di assertRowHeaderImage sampai BUG-026 di-fix
+    // (CLAUDE.md: do not lock in buggy behavior).
+    // v3: target=primary(AQE) — AQE selalu ada kalender (edit mutation target).
+    // Delete-first + add-with-header; setelah TC ini AQE punya Senin/Minggu (attempted header).
+    // Edit spec run berikutnya auto-recover via ensureRowExists di beforeEach.
+    const instansi = d.instansi.primary;
+    kalender.isInstansiInList(instansi).then((exists) => {
+      if (exists) {
+        kalender.openDeleteDialog(instansi);
+        kalender.clickConfirmDelete();
+        kalender.assertDeleteSuccessToast();
+        kalender.assertModalClosed();
+      }
+    });
+    kalender.openAddModal();
+    kalender.selectInstansi(instansi);
+    kalender.selectAwalPekan('Senin');
+    kalender.selectNamaPekan('Minggu');
+    kalender.uploadHeader(d.assets.headerValid);
+    kalender.assertFilePreview('header-valid.png'); // upload register di FE (sukses)
+    kalender.clickSave();
     kalender.assertSuccessToast(d.messages.addSuccess);
     kalender.assertModalClosed();
-    kalender.assertPersisted(instansi); // reload + verify backend persist
+    kalender.assertPersisted(instansi);
     kalender.assertRowAwalPekan(instansi, 'Senin');
     kalender.assertRowNamaPekan(instansi, 'Minggu');
-    kalender.assertRowHeaderImage(instansi);
+    kalender.assertRowHeaderImage(instansi); // <- BUG-026 trigger fail di sini
   });
 
   // ---------- POSITIF ----------
@@ -70,17 +125,21 @@ describe('Kalender Akademik — Tambah (CARDS School)', () => {
   });
 
   it('TC-KLD-ADD-005 | Positif | Isi form valid lalu Batal -> data tidak tersimpan', () => {
-    const instansi = d.instansi.primary; // tidak save -> instansi tidak terpakai jadi safe rerun
-    kalender.openAddModal();
-    kalender.selectInstansi(instansi);
-    kalender.selectAwalPekan('Senin');
-    kalender.selectNamaPekan('Minggu');
-    kalender.uploadHeader(d.assets.headerValid);
-    kalender.clickCancel();
-    kalender.assertModalClosed();
-    // verifikasi tidak tersimpan: reload + cek instansi tidak muncul di list
-    // (kalau primary sudah punya kalender dari run sebelumnya, assertion ini akan FAIL — itu signal cleanup perlu)
-    kalender.assertRowNotExists(instansi);
+    // v3: primary=AQE selalu ada kalender (edit target), jadi assertRowNotExists ga cocok.
+    // Ganti pattern: snapshot row count sebelum, cancel, assert count unchanged + no success toast.
+    const instansi = d.instansi.primary;
+    cy.get('table tbody tr').its('length').then((countBefore) => {
+      kalender.openAddModal();
+      kalender.selectInstansi(instansi);
+      kalender.selectAwalPekan('Senin');
+      kalender.selectNamaPekan('Minggu');
+      kalender.uploadHeader(d.assets.headerValid);
+      kalender.clickCancel();
+      kalender.assertModalClosed();
+      kalender.assertNoSuccessToast();
+      // Cancel gak boleh nambah row baru
+      cy.get('table tbody tr').should('have.length', countBefore);
+    });
   });
 
   it('TC-KLD-ADD-006 | Positif | Klik close X di pojok kanan atas modal -> modal tertutup', () => {
@@ -152,7 +211,7 @@ describe('Kalender Akademik — Tambah (CARDS School)', () => {
   });
 
   it('TC-KLD-ADD-012 | Negatif | Duplikasi: instansi sudah punya kalender -> toast error global', () => {
-    const instansi = d.instansi.existing; // SMA Digital Indonesia — sudah ada di list
+    const instansi = d.instansi.existing; // SDI — sudah ada kalender + header (seed permanen)
     kalender.openAddModal();
     kalender.selectInstansi(instansi);
     kalender.selectAwalPekan('Minggu');
@@ -200,21 +259,5 @@ describe('Kalender Akademik — Tambah (CARDS School)', () => {
     kalender.elements.pilihFileBtn().should('be.visible'); // tombol Pilih File muncul kembali
   });
 
-  it('TC-KLD-ADD-016 | Edge | Persistence: reload -> data Tambah tetap ada', () => {
-    // Pakai instansi yang sama dgn TC-001 (tertiary): kalau ini run setelah TC-001 sukses,
-    //   data sudah ada -> just verify persist. Kalau standalone -> Tambah dulu.
-    const instansi = d.instansi.tertiary;
-    kalender.isInstansiInList(instansi).then((exists) => {
-      if (!exists) {
-        // belum ada -> bikin dulu
-        kalender.addKalender(instansi, 'Minggu', 'Ahad');
-        kalender.assertSuccessToast(d.messages.addSuccess);
-      }
-      // verifikasi persist via reload (assertPersisted = visit ulang + cek row)
-      kalender.assertPersisted(instansi);
-      kalender.assertRowAwalPekan(instansi, 'Minggu');
-      kalender.assertRowNamaPekan(instansi, 'Ahad');
-      kalender.assertRowHeaderImage(instansi);
-    });
-  });
+  // TC-016 dipindah ke atas (setelah TC-001) — lihat definisi baru di line ~65.
 });

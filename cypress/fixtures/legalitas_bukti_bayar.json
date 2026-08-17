@@ -1,0 +1,63 @@
+{
+  "_status": "KERANGKA — nilai TODO/(?) belum diverifikasi ke UI asli. Jangan dipakai di spec sebelum lewat checkpoint element analysis.",
+  "_sumber": "Struktur dibangun sendiri (konvensi repo ini). Kandidat nilai dari repo qa-cazh — app sama, tapi BELUM kita buktikan. Lihat docs/REFERENSI_ELEMEN.md.",
+  "urls": {
+    "base": "https://v3.cazh.id",
+    "login": "/auth/login"
+  },
+  "credentials": {
+    "email": "androidtesting117@gmail.com",
+    "password": "f7ki6b2u"
+  },
+  "instansi": {
+    "primary": "Sekolah Digital Indonesia",
+    "secondary": "Academy QA Engineer"
+  },
+  "testData": {
+    "prefix": "QA"
+  },
+  "timeouts": {
+    "dialog": 15000,
+    "table": 15000,
+    "dropdown": 8000,
+    "toast": 12000,
+    "api": 15000
+  },
+  "_bentuk": "modal-dari-sidebar — TIDAK punya route sendiri",
+  "sidebarPath": [
+    "Pengaturan",
+    "Tagihan",
+    "Legalitas Bukti Bayar"
+  ],
+  "labels": {
+    "dialogTitle": "Legalitas Bukti Bayar",
+    "pengesahan": "Pengesahan",
+    "jabatan": "Jabatan",
+    "namaTerang": "Nama Terang"
+  },
+  "messages": {
+    "pengesahanRequired": "TODO",
+    "jabatanRequired": "TODO",
+    "namaTerangRequired": "TODO",
+    "maxFileSize": "TODO — qa-cazh: 'File melebihi ukuran maksimal 2MB' (unverified)",
+    "invalidFileType": "TODO — qa-cazh: 'bukan tipe file yang diterima' (unverified)",
+    "signatureInfo": "TODO — qa-cazh: 'Pastikan tanda tangan memiliki background transparan/putih' (unverified)"
+  },
+  "upload": {
+    "_todo": "siapkan file uji SENDIRI di cypress/fixtures/signature/ — jangan salin dari repo mereka",
+    "allowed": [
+      "png",
+      "jpg",
+      "jpeg"
+    ],
+    "maxSizeMB": 2,
+    "validPng": "TODO",
+    "largeFile": "TODO — >2MB",
+    "invalidType": "TODO — .pdf"
+  },
+  "validForm": {
+    "pengesahan": "Mengetahui",
+    "jabatan": "Bendahara Yayasan",
+    "namaTerang": "Vero Prasetyo"
+  }
+}

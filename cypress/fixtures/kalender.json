@@ -1,18 +1,22 @@
 {
   "urls": {
-    "base": "https://staging-new-school.cazh.id",
+    "base": "https://v3.cazh.id",
     "kalenderList": "/setting/academic/academic-calendar",
     "login": "/auth/login"
   },
   "credentials": {
-    "email": "admin@cazh.id",
-    "password": "@GrahaTimur2026"
+    "email": "androidtesting117@gmail.com",
+    "password": "f7ki6b2u"
   },
   "instansi": {
-    "primary": "SMP Digital Indonesia+",
-    "secondary": "SD Digital Indonesia",
-    "tertiary": "MI Digital Indonesia",
-    "existing": "SMA Digital Indonesia"
+    "_note": "Mapping 4-instansi v3.cazh.id. Constraint (user 29 Jul 2026): kalender YNS & SDI JANGAN DIMODIF (assert-only, seed permanen). primary/unusedForEdit/unusedAlt/tertiary di-map ke sandbox AQE/AC. Pre-condition: (1) YNS+SDI punya kalender+header (existing). (2) AQE PRE-SEEDED 1 kalender Senin/Minggu tanpa header buat primary mutation target — kalau kosong, editkalender spec auto-seed via ensureRowExists. (3) AC awal RUN kosong (dipakai unusedForEdit/unusedAlt/tertiary/instansiTanpaKalender). Rerun caveat: kalender per-instansi 1:1 & tanpa nama unik → TC-ADD-001 populate AC → rerun butuh delete manual atau addKalender-then-delete cleanup. hapuskalender TC-008 sekarang delete-then-add-then-delete biar AC bersih.",
+    "primary": "Academy QA Engineer",
+    "secondary": "Sekolah Digital Indonesia",
+    "tertiary": "Academy Cazh",
+    "existing": "Sekolah Digital Indonesia",
+    "digitalIntl": "Sekolah Digital Indonesia",
+    "unusedForEdit": "Academy Cazh",
+    "unusedAlt": "Academy Cazh"
   },
   "labels": {
     "pageTitle": "Data Kalender Akademik",
@@ -29,6 +33,7 @@
     "placeholderInstansi": "Pilih Instansi",
     "placeholderAwalPekan": "Pilih Awal pekan dimulai",
     "placeholderNamaPekan": "Pilih Nama Pekan",
+    "btnHapus": "Hapus",
     "btnPilihFile": "Pilih File",
     "tipUkuran": "Ukuran 500 X 300 Pixel",
     "tipFormat": "Format File jpg, jpeg, png",
@@ -47,10 +52,20 @@
     "addSuccess": "Kalender Akademik berhasil ditambahkan",
     "editSuccess": "Kalender Akademik berhasil diperbarui",
     "deleteSuccess": "Kalender Akademik berhasil dihapus",
-    "duplicate": "Pengaturan kalender untuk office ini sudah ada"
+    "deleteConfirmPrefix": "Apakah anda yakin ingin menghapus",
+    "duplicate": "Pengaturan kalender untuk office ini sudah ada",
+    "emptyStateTitleExpected": "Data Kalender Akademik tidak ditemukan",
+    "emptyStateTitleActual": "Data Kalender Pendidikan tidak ditemukan"
+  },
+  "list": {
+    "filterAllExpectedCount": 1,
+    "filterAllActualCount": 2,
+    "defaultPageSize": 10,
+    "totalDataNow": 5,
+    "instansiTanpaKalender": "Academy Cazh"
   },
   "assets": {
-    "headerValid": "cypress/fixtures/kalender/header-valid.jpg",
+    "headerValid": "cypress/fixtures/kalender/header-valid.png",
     "headerOversize": "cypress/fixtures/kalender/header-oversize.jpg",
     "samplePdf": "cypress/fixtures/kalender/sample.pdf",
     "fallbackNonImage": "package.json"

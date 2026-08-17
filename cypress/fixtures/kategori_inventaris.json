@@ -1,0 +1,57 @@
+{
+  "_status": "KERANGKA — nilai bertanda TODO/(?) belum diverifikasi ke UI asli. Jangan dipakai di spec sebelum lewat checkpoint element analysis.",
+  "_sumber": "Struktur dibangun sendiri (konvensi repo ini). Kandidat nilai berasal dari repo qa-cazh — app yang sama, tapi BELUM kita buktikan. Lihat docs/REFERENSI_ELEMEN.md.",
+  "urls": {
+    "base": "https://v3.cazh.id",
+    "login": "/auth/login",
+    "list": "/setting/inventory"
+  },
+  "api": {
+    "_todo": "isi dari tab Network (XHR) saat element analysis",
+    "list": null,
+    "save": null
+  },
+  "credentials": {
+    "email": "androidtesting117@gmail.com",
+    "password": "f7ki6b2u"
+  },
+  "instansi": {
+    "primary": "Sekolah Digital Indonesia",
+    "secondary": "Academy QA Engineer"
+  },
+  "labels": {
+    "addButton": "Tambah Kategori",
+    "namaLabel": "Nama Kategori",
+    "namaPlaceholder": "TODO — qa-cazh: 'Contoh: Meja atau Kursi' (unverified)",
+    "statusActive": "Aktif",
+    "statusInactive": "Tidak Aktif"
+  },
+  "messages": {
+    "addSuccess": "TODO",
+    "editSuccess": "TODO",
+    "deleteSuccess": "TODO",
+    "instansiRequired": "TODO — qa-cazh: 'Instansi wajib diisi' (unverified)",
+    "namaRequired": "TODO — qa-cazh: 'Nama kategori inventaris wajib diisi' (unverified)",
+    "emptyState": "TODO — qa-cazh tidak konsisten: POM 'Data inventaris tidak ditemukan' vs fixture 'Tidak ada data yang ditemukan'"
+  },
+  "columns": {
+    "instansi": 0,
+    "nama": 1
+  },
+  "fields": {
+    "nama": {
+      "maxLength": null,
+      "_todo": "batas panjang nama — cek PRD"
+    }
+  },
+  "testData": {
+    "prefix": "QA"
+  },
+  "timeouts": {
+    "dialog": 15000,
+    "table": 15000,
+    "dropdown": 8000,
+    "toast": 12000,
+    "api": 15000
+  }
+}

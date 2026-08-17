@@ -41,8 +41,11 @@ COLS = [
     ("Bug ID", 10), ("Module", 18), ("Title", 34), ("Steps to Reproduce", 42),
     ("Expected Result", 42), ("Actual Result", 52), ("Severity", 11),
     ("Priority", 10), ("Reporter", 16), ("Status", 12), ("Date Found", 13),
+    ("Video Evidence", 32), ("Screenshot Evidence", 32),
 ]
 CENTER_COLS = {1, 7, 8, 9, 10, 11}  # Bug ID, Severity, Priority, Reporter, Status, Date
+EVIDENCE_COLS = {12, 13}             # Video, Screenshot (hyperlink + warna)
+HYPERLINK_COLOR = "0563C1"           # biru standar Excel hyperlink
 
 with open(SRC, encoding="utf-8") as f:
     reader = csv.reader(f)
@@ -58,7 +61,7 @@ ws["A1"] = "\U0001F41B BUG TRACKER \u2014 QA Automation Findings"
 ws["A1"].font = Font(name="Arial", bold=True, size=14, color=NAVY)
 
 # baris 2: subtitle
-ws["A2"] = ("Reporter: Fajar Ardiansyah  |  Env: staging-new-school.cazh.id  |  "
+ws["A2"] = ("Reporter: Fajar Ardiansyah  |  Env: v3.cazh.id  |  "
             "Tester: QA Automation (Cypress)")
 ws["A2"].font = Font(name="Arial", size=9, color=SUBTLE)
 
@@ -84,6 +87,11 @@ for ri, row in enumerate(data, start=start):
             horizontal="center" if ci in CENTER_COLS else "left",
             vertical="top", wrap_text=True)
         c.border = BORDER
+        # Evidence kolom (Video & Screenshot): jadikan hyperlink kalau ada path/value.
+        # Format clickable: relative path -> di-buka pakai default app di OS.
+        if ci in EVIDENCE_COLS and val and val.strip():
+            c.hyperlink = val.strip()
+            c.font = Font(name="Arial", size=10, color=HYPERLINK_COLOR, underline="single")
     # Severity (col 7)
     sev = ws.cell(row=ri, column=7)
     fill = SEV_FILL.get((sev.value or "").strip())

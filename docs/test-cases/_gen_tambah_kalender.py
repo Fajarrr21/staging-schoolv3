@@ -43,12 +43,12 @@ ROWS = [
 
     ["TC-KLD-ADD-002", "Happy",
      "Tambah kalender lengkap (3 field wajib + upload foto <2MB)",
-     "Login admin; ada instansi tanpa kalender; file `cypress/fixtures/kalender/header-valid.jpg` (<2MB) tersedia",
-     "1) Klik \"Tambah Kalender Akademik\"\n2) Pilih Instansi\n3) Pilih Awal pekan dimulai = Senin\n4) Pilih Nama Pekan = Minggu\n5) Upload header-valid.jpg (<2MB)\n6) Tunggu preview file muncul (card dengan nama file)\n7) Klik \"Simpan\"",
-     "Instansi=<instansi tanpa kalender>; Awal pekan=Senin; Nama Pekan=Minggu; Header=header-valid.jpg",
+     "Login admin; ada instansi tanpa kalender; file `cypress/fixtures/kalender/header-valid.png` (<2MB) tersedia",
+     "1) Klik \"Tambah Kalender Akademik\"\n2) Pilih Instansi\n3) Pilih Awal pekan dimulai = Senin\n4) Pilih Nama Pekan = Minggu\n5) Upload header-valid.png (<2MB)\n6) Tunggu preview file muncul (card dengan nama file)\n7) Klik \"Simpan\"",
+     "Instansi=<instansi tanpa kalender>; Awal pekan=Senin; Nama Pekan=Minggu; Header=header-valid.png",
      "Toast sukses; modal tertutup; baris baru muncul dengan badge \"Senin\" + badge \"Minggu\" + thumbnail foto header yang diupload (bukan default)",
-     "PRD", "Belum dijalankan",
-     "Verifikasi persist via reload + cek img src kolom Header bukan default URL"],
+     "PRD", "FAIL",
+     "BUG-026 — Upload sukses (toast & modal close) tapi kolom Header kosong (text \"-\"). Regresi: sebelumnya berfungsi"],
 
     # ---------------- POSITIF ----------------
     ["TC-KLD-ADD-003", "Positif",
@@ -132,9 +132,9 @@ ROWS = [
 
     ["TC-KLD-ADD-012", "Negatif",
      "Duplikasi: Tambah untuk instansi yang sudah punya kalender -> toast error global",
-     "Login admin; pilih instansi yang sudah ada entry di list (mis. SMA Digital Indonesia)",
+     "Login admin; pilih instansi yang sudah ada entry di list (mis. Sekolah Digital Indonesia (SDI))",
      "1) Klik \"Tambah Kalender Akademik\"\n2) Pilih Instansi yang sudah ada kalender-nya\n3) Pilih Awal pekan + Nama Pekan\n4) Klik \"Simpan\"\n5) Amati toast & list",
-     "Instansi=SMA Digital Indonesia (atau instansi lain yang sudah ada di list)",
+     "Instansi=Sekolah Digital Indonesia (SDI) (atau instansi lain yang sudah ada di list)",
      "Toast error global muncul (di portal, BUKAN inline di modal): \"Pengaturan kalender untuk office ini sudah ada\". Tidak ada toast sukses; modal tetap terbuka (atau tertutup, catat aktual); tidak ada baris duplikat baru di list",
      "PRD-ambigu", "Belum dijalankan",
      "Per konfirmasi user: toast varian error, query global ([data-sonner-toast]/[role=status]), auto-dismiss -> assert harus quick & andalkan retry cy.contains, jangan cy.wait fixed"],

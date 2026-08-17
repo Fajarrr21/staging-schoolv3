@@ -1,21 +1,23 @@
 {
   "urls": {
-    "base": "https://staging-new-school.cazh.id",
+    "base": "https://v3.cazh.id",
     "login": "/auth/login",
     "dashboard": "/dashboard",
     "list": "/setting/academic/school-level"
   },
   "credentials": {
-    "email": "admin@cazh.id",
-    "password": "@GrahaTimur2026"
+    "email": "androidtesting117@gmail.com",
+    "password": "f7ki6b2u"
   },
   "instansi": {
-    "primary": "Koperasi SMP",
-    "secondary": "SDIT"
+    "primary": "Yayasan New School",
+    "secondary": "Sekolah Digital Indonesia",
+    "tertiary": "Academy QA Engineer",
+    "_note_tertiary": "AQE punya 2 row Tingkat: SMA (Aktif) + SMP (Tidak Aktif) — dipake TC-011/012 combo filter hard-assert."
   },
-  "office": {
-    "primaryId": "68c230c20831df00194c8818",
-    "secondaryId": "68ad284c0a04f100196aa4c3"
+  "knownRows": {
+    "tertiaryAktif": "SMA",
+    "tertiaryTidakAktif": "SMP"
   },
   "list": {
     "emptyText": "Data Tingkat tidak ditemukan",

@@ -1,0 +1,122 @@
+{
+  "urls": {
+    "base": "https://v3.cazh.id",
+    "jadwalList": "/setting/academic/course-schedule",
+    "jadwalDetailPattern": "/setting/academic/course-schedule/{id}",
+    "jadwalDetailRegex": "^/setting/academic/course-schedule/\\d+$",
+    "login": "/auth/login"
+  },
+  "credentials": {
+    "email": "androidtesting117@gmail.com",
+    "password": "f7ki6b2u"
+  },
+  "master": {
+    "instansi": "Yayasan New School",
+    "instansiSecondary": "Sekolah Digital Indonesia",
+    "tingkat": "12",
+    "kelasSingle": "12 IPA A",
+    "kelasMulti": ["10 IPA-3", "10 IPA-5"],
+    "jurusan": "IPA",
+    "tag": "Beasiswa"
+  },
+  "labels": {
+    "pageTitle": "Jadwal Pelajaran",
+    "btnTambah": "Tambah Jadwal Pelajaran",
+    "btnSimpan": "Simpan",
+    "btnBatal": "Batal",
+    "modalTitle": "Tambah Jadwal Pelajaran",
+    "editPageTitle": "Edit Jadwal Pelajaran",
+    "placeholderInstansi": "Pilih Instansi",
+    "placeholderTingkat": "Pilih Tingkat",
+    "placeholderKelas": "Pilih Kelas",
+    "placeholderJurusan": "Pilih Jurusan",
+    "placeholderTag": "Pilih Tag",
+    "labelTahunAjaran": "Tahun Ajaran",
+    "labelSemester": "Semester",
+    "labelInstansi": "Instansi",
+    "labelTingkat": "Tingkat",
+    "labelKelas": "Kelas",
+    "labelJurusan": "Jurusan",
+    "labelMultiKelas": "Multi Kelas",
+    "labelTag": "Tag",
+    "jurusanOptional": "Jurusan (Opsional)",
+    "tagOptional": "Tag (Opsional)"
+  },
+  "messages": {
+    "instansiRequired": "Instansi wajib diisi",
+    "tingkatRequired": "Tingkat wajib diisi",
+    "kelasRequired": "Kelas wajib diisi",
+    "multiKelasMin2": "Minimal 2 kelas harus dipilih",
+    "duplicateWarning": "Jadwal pelajaran sudah terdaftar!",
+    "addSuccessTitle": "Jadwal pelajaran berhasil ditambahkan",
+    "addSuccessDesc": "Silahkan lanjutkan dengan menambahkan data Kelas pada menu"
+  },
+  "selectors": {
+    "dialog": "[data-slot=\"dialog-content\"]",
+    "dialogTitle": "[data-slot=\"dialog-title\"]",
+    "dialogClose": "[data-slot=\"dialog-close\"]",
+    "formItem": "[data-slot=\"form-item\"]",
+    "formLabel": "[data-slot=\"form-label\"]",
+    "formMessage": "[data-slot=\"form-message\"]",
+    "selectTrigger": "[data-slot=\"select-trigger\"]",
+    "selectValue": "[data-slot=\"select-value\"]",
+    "selectContent": "[data-slot=\"select-content\"]",
+    "selectItem": "[data-slot=\"select-item\"]",
+    "switchMultiKelas": "[role=\"switch\"][name=\"combined_schedule\"]",
+    "tagCheckbox": "[data-slot=\"checkbox\"]",
+    "tagLabel": "[data-slot=\"label\"]",
+    "toastSuccess": "[data-sonner-toast][data-type=\"success\"]",
+    "toastWarning": "[data-sonner-toast][data-type=\"warning\"]",
+    "toastError": "[data-sonner-toast][data-type=\"error\"]",
+    "grid": "table[data-slot=\"data-grid-table\"]",
+    "gridRow": "table[data-slot=\"data-grid-table\"] tbody tr",
+    "iconTambah": "svg.lucide-square-plus",
+    "iconTrash": "svg.lucide-trash",
+    "iconEdit": "svg.lucide-square-pen",
+    "iconClose": "svg.lucide-x"
+  },
+  "columns": {
+    "instansi": 0,
+    "tahunAjaran": 1,
+    "semester": 2,
+    "tingkat": 3,
+    "kelas": 4,
+    "jurusan": 5,
+    "tag": 6,
+    "status": 7,
+    "createdAt": 8,
+    "aksi": 9
+  },
+  "testData": {
+    "prefix": "QA",
+    "noMatchSearch": "ZZZQA000NOTEXIST"
+  },
+  "cleanup": {
+    "strategy": "recent-created",
+    "windowMinutes": 60,
+    "maxDelete": 400,
+    "note": "Cleanup opsi C: hapus row yg kolom Dibuat Pada masuk window terakhir (default 60 menit). Diassumsi aman karena staging jarang ada create manual di window ini."
+  },
+  "bug": {
+    "tagPickerOverlap": "BUG-032",
+    "toastWarningNotDestructive": "BUG-033",
+    "tagNotResetOnInstansiChange": "BUG-034",
+    "tagPickerPrematureUnscoped": "BUG-035",
+    "modalSaveCommitsToDb": "BUG-036"
+  },
+  "viewports": {
+    "fhd": { "width": 1920, "height": 1080 },
+    "hd":  { "width": 1280, "height": 720 }
+  },
+  "timeouts": {
+    "dialog": 15000,
+    "dropdown": 6000,
+    "shortAction": 800,
+    "validation": 1000,
+    "errorCheck": 2000,
+    "modalAnim": 500,
+    "toastDismiss": 5000,
+    "searchDebounce": 1000,
+    "redirect": 10000
+  }
+}

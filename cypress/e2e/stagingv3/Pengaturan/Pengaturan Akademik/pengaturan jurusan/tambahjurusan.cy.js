@@ -1,6 +1,6 @@
 // tambah_jurusan.cy.js — Spec Tambah Jurusan
 // Modul: Pengaturan > Akademik > Jurusan  |  Route: /setting/academic/major
-// Konvensi: cy.session('admin-cazh-session') via cy.login(), naming rerun-safe QA<6digit-ts><seq>.
+// Konvensi: login lewat LoginPage.loginViaSession (cy.session `session-${email}`), naming rerun-safe QA<6digit-ts><seq>.
 // Semua label/message/instansi/testData dibaca dari fixture jurusan.json (source of truth).
 // CATATAN DATA: spec ini bikin row QA tiap run. Cleanup utility (zzz_cleanup_jurusan)
 //   nyusul bareng modul Hapus — inget pelajaran bloat Kelas (290+ row = flaky).

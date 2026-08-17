@@ -1,0 +1,62 @@
+{
+  "_status": "KERANGKA — nilai bertanda TODO/(?) belum diverifikasi ke UI asli. Jangan dipakai di spec sebelum lewat checkpoint element analysis.",
+  "_sumber": "Struktur dibangun sendiri (konvensi repo ini). Kandidat nilai berasal dari repo qa-cazh — app yang sama, tapi BELUM kita buktikan. Lihat docs/REFERENSI_ELEMEN.md.",
+  "urls": {
+    "base": "https://v3.cazh.id",
+    "login": "/auth/login",
+    "list": "/setting/administration/announcement-category",
+    "create": "/setting/administration/announcement-category/create"
+  },
+  "api": {
+    "_todo": "isi dari tab Network (XHR) saat element analysis",
+    "list": null,
+    "save": null
+  },
+  "credentials": {
+    "email": "androidtesting117@gmail.com",
+    "password": "f7ki6b2u"
+  },
+  "instansi": {
+    "primary": "Sekolah Digital Indonesia",
+    "secondary": "Academy QA Engineer"
+  },
+  "labels": {
+    "addButton": "Tambah Kategori",
+    "namaLabel": "Nama Kategori",
+    "statusActive": "Aktif",
+    "statusInactive": "Nonaktif"
+  },
+  "messages": {
+    "addSuccess": "TODO — qa-cazh: 'Kategori berhasil ditambahkan' (unverified)",
+    "editSuccess": "TODO — qa-cazh: 'Kategori berhasil diperbarui' (unverified)",
+    "deleteSuccess": "TODO — qa-cazh: 'Kategori berhasil dihapus' (unverified)",
+    "namaRequired": "TODO — qa-cazh: 'Nama kategori harus diisi.' (unverified)",
+    "namaMinLength": "TODO — qa-cazh: 'Nama kategori minimal 2 karakter.' (unverified)",
+    "namaMaxLength": "TODO — qa-cazh: 'Nama kategori maksimal 100 karakter.' (unverified)",
+    "namaDuplicate": "TODO — qa-cazh: 'Nama kategori sudah digunakan.' (unverified)",
+    "deleteInUse": "TODO — qa-cazh: 'Kategori tidak dapat dihapus karena masih digunakan oleh pengumuman lain.' (unverified)",
+    "emptyState": "TODO — qa-cazh: 'Kategori tidak ditemukan.' (unverified)"
+  },
+  "columns": {
+    "nama": 0,
+    "status": 1
+  },
+  "fields": {
+    "nama": {
+      "minLength": 2,
+      "maxLength": 100,
+      "allowedChars": "huruf, angka, spasi, dan - _ & .",
+      "_sumber": "qa-cazh (unverified) — konfirmasi ke PRD"
+    }
+  },
+  "testData": {
+    "prefix": "QA"
+  },
+  "timeouts": {
+    "dialog": 15000,
+    "table": 15000,
+    "dropdown": 8000,
+    "toast": 12000,
+    "api": 15000
+  }
+}

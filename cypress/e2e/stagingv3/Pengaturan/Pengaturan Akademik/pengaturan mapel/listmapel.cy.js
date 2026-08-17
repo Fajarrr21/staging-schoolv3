@@ -135,8 +135,14 @@ describe('List Mata Pelajaran - Fajar Ardiansyah', () => {
       cy.wait(data.timeouts.searchDebounce)
       MapelPage.assertSubjectInList(nama)
 
-      MapelPage.elements.dataGridRows().each(($row) => {
-        cy.wrap($row).find('td').eq(data.columns.instansi).should('contain', data.instansi.primary)
+      // should(callback) + Cypress.$ sinkron — .each() + cy.wrap() bikin detached DOM
+      MapelPage.elements.dataGridRows().should(($rows) => {
+        $rows.each((i, row) => {
+          expect(
+            Cypress.$(row).find('td').eq(data.columns.instansi).text(),
+            `baris ${i + 1} kolom instansi`,
+          ).to.contain(data.instansi.primary)
+        })
       })
     })
 
@@ -153,8 +159,13 @@ describe('List Mata Pelajaran - Fajar Ardiansyah', () => {
       cy.wait(data.timeouts.searchDebounce)
       MapelPage.assertSubjectInList(nama)
 
-      MapelPage.elements.dataGridRows().each(($row) => {
-        cy.wrap($row).find('td').eq(data.columns.instansi).should('contain', data.instansi.secondary)
+      MapelPage.elements.dataGridRows().should(($rows) => {
+        $rows.each((i, row) => {
+          expect(
+            Cypress.$(row).find('td').eq(data.columns.instansi).text(),
+            `baris ${i + 1} kolom instansi`,
+          ).to.contain(data.instansi.secondary)
+        })
       })
     })
   })
@@ -221,9 +232,18 @@ describe('List Mata Pelajaran - Fajar Ardiansyah', () => {
       cy.wait(data.timeouts.searchDebounce)
 
       MapelPage.assertSubjectInList(nama)
-      MapelPage.elements.dataGridRows().each(($row) => {
-        cy.wrap($row).find('td').eq(data.columns.instansi).should('contain', data.instansi.primary)
-        cy.wrap($row).should('not.contain', data.labels.statusInactive)
+      MapelPage.elements.dataGridRows().should(($rows) => {
+        $rows.each((i, row) => {
+          const $row = Cypress.$(row)
+          expect(
+            $row.find('td').eq(data.columns.instansi).text(),
+            `baris ${i + 1} kolom instansi`,
+          ).to.contain(data.instansi.primary)
+          expect(
+            $row.text(),
+            `baris ${i + 1} tidak boleh berstatus nonaktif`,
+          ).to.not.contain(data.labels.statusInactive)
+        })
       })
     })
   })

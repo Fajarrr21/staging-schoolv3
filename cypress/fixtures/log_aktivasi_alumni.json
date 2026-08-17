@@ -1,0 +1,60 @@
+{
+  "_status": "KERANGKA — nilai TODO/(?) belum diverifikasi ke UI asli. Jangan dipakai di spec sebelum lewat checkpoint element analysis.",
+  "_sumber": "Struktur dibangun sendiri (konvensi repo ini). Kandidat nilai dari repo qa-cazh — app sama, tapi BELUM kita buktikan. Lihat docs/REFERENSI_ELEMEN.md.",
+  "urls": {
+    "base": "https://v3.cazh.id",
+    "login": "/auth/login",
+    "list": "/member/alumni/activation-log"
+  },
+  "credentials": {
+    "email": "androidtesting117@gmail.com",
+    "password": "f7ki6b2u"
+  },
+  "instansi": {
+    "primary": "Sekolah Digital Indonesia",
+    "secondary": "Academy QA Engineer"
+  },
+  "testData": {
+    "prefix": "QA"
+  },
+  "timeouts": {
+    "dialog": 15000,
+    "table": 15000,
+    "dropdown": 8000,
+    "toast": 12000,
+    "api": 15000
+  },
+  "labels": {
+    "pageTitle": "Log Aktivasi Alumni",
+    "pageSubtitle": "Riwayat pengajuan aktivasi alumni dan keputusannya"
+  },
+  "tabs": {
+    "pending": "Menunggu",
+    "approved": "Disetujui",
+    "rejected": "Ditolak",
+    "default": "Menunggu"
+  },
+  "columns": {
+    "tanggal": 0,
+    "pengaju": 1,
+    "tipeAnggota": 2,
+    "jumlah": 3,
+    "catatan": 4,
+    "status": 5,
+    "keputusan": 6,
+    "aksi": 7
+  },
+  "columnLabels": [
+    "Tanggal",
+    "Pengaju",
+    "Tipe Anggota",
+    "Jumlah",
+    "Catatan",
+    "Status",
+    "Keputusan",
+    "Aksi"
+  ],
+  "messages": {
+    "emptyState": "TODO"
+  }
+}

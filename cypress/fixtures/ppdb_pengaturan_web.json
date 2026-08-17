@@ -1,0 +1,44 @@
+{
+  "_status": "KERANGKA — nilai TODO/(?) belum diverifikasi ke UI asli. Jangan dipakai di spec sebelum lewat checkpoint element analysis.",
+  "_sumber": "Struktur dibangun sendiri (konvensi repo ini). Kandidat nilai dari repo qa-cazh — app sama, tapi BELUM kita buktikan. Lihat docs/REFERENSI_ELEMEN.md.",
+  "urls": {
+    "base": "https://v3.cazh.id",
+    "login": "/auth/login",
+    "list": "/member/admission/setting"
+  },
+  "credentials": {
+    "email": "androidtesting117@gmail.com",
+    "password": "f7ki6b2u"
+  },
+  "instansi": {
+    "primary": "Sekolah Digital Indonesia",
+    "secondary": "Academy QA Engineer"
+  },
+  "testData": {
+    "prefix": "QA"
+  },
+  "timeouts": {
+    "dialog": 15000,
+    "table": 15000,
+    "dropdown": 8000,
+    "toast": 12000,
+    "api": 15000
+  },
+  "_catatan": "PECAH per tab jadi TC sheet terpisah — jangan gabung 7 tab jadi satu",
+  "labels": {
+    "pageTitle": "Pengaturan Web",
+    "pageSubtitle": "Ringkasan Data Pengaturan Web"
+  },
+  "tabs": [
+    "Profil",
+    "Beranda",
+    "Jadwal",
+    "Status Kustom",
+    "Formulir Standar",
+    "Formulir Kustom",
+    "Program Khusus"
+  ],
+  "messages": {
+    "emptyState": "TODO"
+  }
+}

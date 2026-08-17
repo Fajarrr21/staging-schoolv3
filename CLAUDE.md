@@ -2,7 +2,15 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-Cypress E2E test suite for the CARDS School staging app (`https://staging-new-school.cazh.id`). Tests, folder names, and test descriptions are written in **Bahasa Indonesia** — match that language when adding tests.
+Cypress E2E test suite for the CARDS School staging app (`https://v3.cazh.id`). Tests, folder names, and test descriptions are written in **Bahasa Indonesia** — match that language when adding tests.
+
+## App reference (baca duluan sebelum modul baru)
+
+- `cypress/fixtures/app.json` — master data level-app: route map, daftar instansi, akun, selector `data-slot`, pola empty state / date picker / time field / switch. Setiap nilai punya label `verified` / `crosschecked` / `unverified`.
+- `docs/REFERENSI_ELEMEN.md` — penjelasan + **audit** repo QA tim lain (`qa-cazh`, app yang sama): mana selector yang terbukti, mana yang tebakan, dan praktik mereka yang sengaja tidak kita tiru.
+- `docs/Peta_Fitur_qa-cazh.xlsx` — peta 20 modul app + aset yang tersedia per modul, buat memilih modul berikutnya. Kolom `Siap`: **A** = ada POM + fixture + judul TC · **B** = judul TC lengkap tapi elemen mentah · **C** = sudah kita punya. Generator: `scripts/build_feature_map.py`.
+- `docs/Action_Items_QA.xlsx` — daftar perbaikan repo ini (sheet `Repo Ini`) + temuan di repo mereka (sheet `qa-cazh`). Generator: `scripts/build_action_items.py`.
+- Nilai berlabel `unverified` **tetap** harus lewat checkpoint element analysis (minta HTML asli) sebelum dikunci ke fixture modul. Kalau terbukti benar, naikkan ke `verified`; kalau salah, hapus.
 
 ## Commands
 
@@ -28,6 +36,8 @@ Cypress E2E test suite for the CARDS School staging app (`https://staging-new-sc
 ## Test conventions
 
 - **Page Object Model**: each page is a class exported as a singleton (`export default new JurusanPage()`) under `cypress/support/pageobjects/`. Element getters live in an `elements` object; methods are chainable (`return this`). Add behavior to the relevant page object rather than inlining selectors in specs.
+- **Modul baru pakai `base/CrudListPage`** (`cypress/support/pageobjects/base/`, lihat README di sana). POM turunan cukup mendeklarasikan config — route, teks tombol, judul dialog, `fields`, `columns`, `api` — sisanya diwarisi. Kalau ada selector yang meleset, yang diperbaiki satu baris config, bukan ratusan baris POM. POM lama (Tag/Jurusan/Kamar/…) **tidak** di-refactor ke base ini supaya run yang sudah jalan tidak terganggu.
+- POM turunan yang masih berstatus **KERANGKA** menandai nilai hipotesis dengan `(?)`. Jangan menulis spec di atas config yang masih `(?)` — lewati checkpoint element analysis dulu.
 - **Selectors** target the app's Radix UI / shadcn markup: prefer `data-slot` attributes (`[data-slot="dialog-content"]`, `[data-slot="select-trigger"]`), label-scoped form items, row-by-text (`cy.contains('table tbody tr', name)`), and lucide icon classes (`svg.lucide-square-pen`). Toasts are Sonner: `[data-sonner-toast][data-type="success"]`.
 - **Use native `.click()`** — do not use `cypress-real-events`. We tried it but it caused CDP errors (`Page.bringToFront` / CRI reset), so we reverted to native events.
 - **Avoid flaky waits**: to handle re-renders after search/filter, use `cy.intercept` + `cy.wait('@alias')` (deterministic). **Do not** use `cy.wait(<number>)`.

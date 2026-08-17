@@ -1,17 +1,18 @@
 {
   "urls": {
-    "base": "https://staging-new-school.cazh.id",
+    "base": "https://v3.cazh.id",
     "login": "/auth/login",
+    "dashboard": "/dashboard",
     "forgotPassword": "/forgot-password"
   },
   "credentials": {
     "valid": {
-      "email": "admin@cazh.id",
-      "password": "@GrahaTimur2026"
+      "email": "androidtesting117@gmail.com",
+      "password": "f7ki6b2u"
     },
     "validLowercase": {
-      "email": "admin@cazh.id",
-      "password": "@GrahaTimur2026"
+      "email": "androidtesting117@gmail.com",
+      "password": "f7ki6b2u"
     },
     "wrongPassword": {
       "email": "admin@cazh.id",
@@ -19,7 +20,7 @@
     },
     "unregisteredEmail": {
       "email": "tidakterdaftar@email.com",
-      "password": "@GrahaTimur2026"
+      "password": "f7ki6b2u"
     },
     "allWrong": {
       "email": "salah@email.com",
@@ -27,12 +28,15 @@
     },
     "invalidFormat": {
       "email": "admincazh",
-      "password": "@GrahaTimur2026"
+      "password": "f7ki6b2u"
     },
     "specialChar": {
       "email": "@@##$$%%",
       "password": "@@##$$%%"
     }
+  },
+  "api": {
+    "login": "**/api/auth/login"
   },
   "messages": {
     "invalidCredentials": "Identitas tersebut tidak cocok dengan data kami",
@@ -42,6 +46,32 @@
     "emailPlaceholder": "Masukkan email",
     "submitButton": "Masuk",
     "forgotPasswordLink": "Lupa"
+  },
+  "localization": {
+    "_note": "Teks halaman login ID & EN. Sumber: repo qa-cazh (tim lain, app yang sama) — BELUM diverifikasi ke UI oleh kita. Switcher bahasa: klik teks 'Bahasa'/'Language' lalu pilih 'Indonesia'/'English'.",
+    "_status": "unverified",
+    "switcher": { "id": "Bahasa", "en": "Language" },
+    "option": { "id": "Indonesia", "en": "English" },
+    "id": {
+      "title": "Masuk ke akun anda !",
+      "description": "Isikan alamat email dan password...",
+      "emailLabel": "Email",
+      "passwordLabel": "Password",
+      "submitButton": "Masuk",
+      "forgotPassword": "Lupa Password",
+      "googleButton": "Masuk dengan google",
+      "membershipCard": "Cek Kartu Anggota"
+    },
+    "en": {
+      "title": "Log in to your account!",
+      "description": "Please enter your email and password...",
+      "emailLabel": "Email",
+      "passwordLabel": "Password",
+      "submitButton": "Login",
+      "forgotPassword": "Forgot Password",
+      "googleButton": "Login using google",
+      "membershipCard": "Check Membership Card"
+    }
   },
   "viewports": {
     "mobile":  { "width": 375,  "height": 812 },

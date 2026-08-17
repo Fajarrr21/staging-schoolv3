@@ -11,7 +11,7 @@
 // Stop point happy flow: URL berubah ke /verifikasi-otp (TIDAK ada toast di halaman ini)
 //
 // PENTING — DOMAIN OVERRIDE:
-//   cypress.config.js baseUrl = "https://staging-new-school.cazh.id" (untuk modul Pengaturan).
+//   cypress.config.js baseUrl = "https://v3.cazh.id" (untuk modul Pengaturan).
 //   Onboarding domain BEDA: https://staging.cards.co.id.
 //   Maka cy.visit() di POM ini WAJIB pakai FULL URL absolute (bukan relative path), agar tidak
 //   ke-resolve ke baseUrl + path -> redirect ke /auth/login dari sistem internal cazh.

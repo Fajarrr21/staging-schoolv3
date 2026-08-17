@@ -1,0 +1,211 @@
+{
+  "_note": "Master data level-aplikasi (bukan per modul). Dipakai sebagai rujukan saat bikin fixture modul baru supaya tidak riset ulang. Detail + audit ada di docs/REFERENSI_ELEMEN.md.",
+  "_confidence": {
+    "verified": "sudah dipakai & jalan di repo ini",
+    "crosschecked": "sama persis di repo ini dan di qa-cazh (tim lain), aman dipakai",
+    "unverified": "baru dari qa-cazh, BELUM dicek ke DOM asli — wajib konfirmasi sebelum dipakai di spec"
+  },
+
+  "app": {
+    "name": "CARDS School — CAZH v3",
+    "base": "https://v3.cazh.id",
+    "login": "/auth/login",
+    "dashboard": "/dashboard",
+    "stack": "Next.js + Radix UI / shadcn + Sonner toast + recharts + react-day-picker + React Aria (time field)",
+    "bilingual": true,
+    "_confidence": "crosschecked"
+  },
+
+  "accounts": {
+    "_note": "Kredensial staging. `primary` adalah akun yang sama yang dipakai repo ini dan qa-cazh.",
+    "primary": {
+      "email": "androidtesting117@gmail.com",
+      "password": "f7ki6b2u",
+      "_confidence": "verified"
+    },
+    "weakPin": {
+      "email": "cazhv3@pgl.my.id",
+      "password": "346z1pb5",
+      "_note": "Akun dengan PIN lemah — memunculkan banner + popup 'Perkuat Keamanan PIN Anda' di dashboard. Berguna untuk skenario PIN, TAPI bikin dashboard punya modal nyangkut di test lain.",
+      "_confidence": "unverified"
+    }
+  },
+
+  "instansi": {
+    "_note": "Nama instansi yang tersedia pada akun `primary`. Dipakai di dropdown 'Pilih Instansi' hampir semua modul Pengaturan.",
+    "list": ["Sekolah Digital Indonesia", "Academy QA Engineer", "Academy Cazh"],
+    "default": "Sekolah Digital Indonesia",
+    "placeholder": "Pilih Instansi",
+    "placeholderEN": "Select Institution",
+    "_confidence": "crosschecked"
+  },
+
+  "routes": {
+    "verified": {
+      "_note": "Sudah dipakai di spec repo ini; qa-cazh memakai path yang sama persis.",
+      "academicMajor": "/setting/academic/major",
+      "academicSchoolLevel": "/setting/academic/school-level",
+      "academicSchoolYear": "/setting/academic/school-year",
+      "academicClass": "/setting/academic/class",
+      "academicRoom": "/setting/academic/room",
+      "academicSubject": "/setting/academic/subject",
+      "academicTag": "/setting/academic/tag",
+      "academicCalendar": "/setting/academic/academic-calendar",
+      "academicCourseSchedule": "/setting/academic/course-schedule"
+    },
+    "unverified": {
+      "_note": "Dari qa-cazh, belum dibuka sendiri. Cek dulu sebelum masuk fixture modul.",
+      "settingInventory": "/setting/inventory",
+      "settingViolationType": "/setting/student-affairs/violation-type",
+      "settingAnnouncementCategory": "/setting/administration/announcement-category",
+      "settingInstitution": "/setting/institution",
+      "studentAffairsProgress": "/student-affairs/progress",
+      "studentAffairsPermission": "/student-affairs/permission",
+      "studentAffairsViolation": "/student-affairs/violation",
+      "studentAffairsViolationCreate": "/student-affairs/violation/create",
+      "administrationAnnouncementList": "/administration/announcement/list",
+      "administrationAnnouncementCreate": "/administration/announcement/list/create",
+      "administrationPaymentReport": "/administration/billing/payment-report",
+      "memberAlumniActivationLog": "/member/alumni/activation-log",
+      "memberAlumniStudent": "/member/alumni/student",
+      "memberAlumniTeacher": "/member/alumni/teacher",
+      "memberAdmissionSetting": "/member/admission/setting",
+      "profilePin": "/profile?tab=pin"
+    },
+    "conflict": {
+      "_note": "qa-cazh menyebut dua nilai berbeda untuk halaman yang sama — JANGAN dipakai sebelum dicek manual. Detail di docs/REFERENSI_ELEMEN.md bagian Audit.",
+      "settingLegality": ["/setting/invoice/legality", "/setting/invoice/invoice-reminder"],
+      "settingPermissionTime": ["/setting/student-affairs/permission-time", "/setting/student-affairs/permit-time"]
+    },
+    "modalFromSidebar": {
+      "_note": "Modul yang TIDAK punya halaman sendiri — item sidebar-nya langsung membuka dialog di atas halaman yang sedang terbuka. Jangan bikin ROUTE untuk modul ini.",
+      "items": ["Legalitas Bukti Bayar", "Pengaturan Perizinan / Waktu Perizinan"],
+      "_confidence": "unverified"
+    }
+  },
+
+  "selectors": {
+    "_note": "Atribut struktural shadcn/Radix. Kolom confidence lihat _confidence di atas.",
+    "verified": {
+      "dialogContent": "[data-slot=\"dialog-content\"]",
+      "dialogTitle": "[data-slot=\"dialog-title\"]",
+      "dialogFooter": "[data-slot=\"dialog-footer\"]",
+      "dialogClose": "[data-slot=\"dialog-close\"]",
+      "dialogTrigger": "[data-slot=\"dialog-trigger\"]",
+      "dialogOverlay": "[data-slot=\"dialog-overlay\"]",
+      "formItem": "[data-slot=\"form-item\"]",
+      "formLabel": "[data-slot=\"form-label\"]",
+      "formControl": "[data-slot=\"form-control\"]",
+      "formMessage": "[data-slot=\"form-message\"]",
+      "selectTrigger": "[data-slot=\"select-trigger\"]",
+      "selectContent": "[data-slot=\"select-content\"]",
+      "selectItem": "[data-slot=\"select-item\"]",
+      "selectValue": "[data-slot=\"select-value\"]",
+      "badge": "[data-slot=\"badge\"]",
+      "button": "[data-slot=\"button\"]",
+      "input": "[data-slot=\"input\"]",
+      "table": "[data-slot=\"data-grid-table\"]",
+      "pagination": "[data-slot=\"data-grid-pagination\"]",
+      "dropdownTrigger": "[data-slot=\"dropdown-menu-trigger\"]",
+      "dropdownContent": "[data-slot=\"dropdown-menu-content\"]",
+      "alert": "[data-slot=\"alert\"]",
+      "alertTitle": "[data-slot=\"alert-title\"]",
+      "alertDescription": "[data-slot=\"alert-description\"]",
+      "cardHeader": "[data-slot=\"card-header\"]",
+      "cardToolbar": "[data-slot=\"card-toolbar\"]",
+      "pageTitle": "[data-slot=\"page-title\"]",
+      "toastSuccess": "[data-sonner-toast][data-type=\"success\"]",
+      "toastError": "[data-sonner-toast][data-type=\"error\"]"
+    },
+    "unverified": {
+      "_note": "Muncul di qa-cazh tapi belum pernah dipakai di repo ini.",
+      "card": "[data-slot=\"card\"]",
+      "cardTitle": "[data-slot=\"card-title\"]",
+      "cardDescription": "[data-slot=\"card-description\"]",
+      "dialogDescription": "[data-slot=\"dialog-description\"]",
+      "popoverTrigger": "[data-slot=\"popover-trigger\"]",
+      "popoverContent": "[data-slot=\"popover-content\"]",
+      "accordionMenuItem": "[data-slot=\"accordion-menu-item\"]",
+      "accordionMenuTitle": "[data-slot=\"accordion-menu-title\"]",
+      "datefield": "[data-slot=\"datefield\"]",
+      "switch": "button[role=\"switch\"]",
+      "tooltipTrigger": "[data-slot=\"tooltip-trigger\"]",
+      "infoNote": "[data-slot=\"info-note\"]",
+      "alertIcon": "[data-slot=\"alert-icon\"]",
+      "scrollAreaViewport": "[data-radix-scroll-area-viewport]",
+      "chartSurface": "svg.recharts-surface"
+    },
+    "jangan_dipakai": {
+      "_note": "Dipakai qa-cazh HANYA sebagai fallback di dalam OR-list panjang, tidak pernah berdiri sendiri. Kemungkinan besar tebakan, bukan atribut asli. Lihat Audit di docs.",
+      "list": [
+        "[data-slot=\"error\"]",
+        "[data-slot=\"toast\"]",
+        "[data-slot=\"dialog\"]",
+        ".toast",
+        "[class*=\"toast\"]",
+        "p.text-red-500"
+      ]
+    },
+    "icons": {
+      "edit": "svg.lucide-square-pen",
+      "delete": "svg.lucide-trash",
+      "close": "svg.lucide-x",
+      "columnSettings": "svg.lucide-settings2",
+      "rowMenu": "svg.lucide-ellipsis-vertical",
+      "datePicker": "svg.lucide-calendar-days",
+      "sortToggle": "svg.lucide-chevrons-up-down",
+      "_note": "lucide-pencil & lucide-trash-2 dipakai qa-cazh sebagai fallback; di app v3 yang muncul adalah square-pen & trash."
+    }
+  },
+
+  "patterns": {
+    "emptyState": {
+      "template": "Data {Modul} tidak ditemukan",
+      "contoh": [
+        "Data Tahun Ajaran tidak ditemukan",
+        "Data Tingkat tidak ditemukan",
+        "Data Kelas tidak ditemukan",
+        "Data Kamar tidak ditemukan",
+        "Data Tipe Pelanggaran tidak ditemukan"
+      ],
+      "_confidence": "crosschecked"
+    },
+    "datePicker": {
+      "trigger": "svg.lucide-calendar-days",
+      "dayCell": "td[data-day=\"YYYY-MM-DD\"] button",
+      "_note": "Pakai td[data-day] (exact, ISO). JANGAN pakai button[aria-label*=\"July 17\"] seperti qa-cazh — aria-label-nya nama bulan Inggris, pecah kalau UI diganti ke ID.",
+      "_confidence": "verified"
+    },
+    "timeField": {
+      "container": "[data-slot=\"datefield\"]",
+      "hourSegment": "[data-slot=\"datefield\"] [data-type=\"hour\"]",
+      "minuteSegment": "[data-slot=\"datefield\"] [data-type=\"minute\"]",
+      "_note": "React Aria — bukan <input type=\"time\">. Diisi dengan .type('1230') ke container, atau per-segment. Format 24 jam, auto-cap ke 23:59.",
+      "_confidence": "unverified"
+    },
+    "switch": {
+      "selector": "button[role=\"switch\"]",
+      "stateAttr": "data-state",
+      "stateValues": ["checked", "unchecked"],
+      "_note": "Cek state via data-state / aria-checked, bukan :checked (ini <button>, bukan <input>).",
+      "_confidence": "unverified"
+    },
+    "dialogState": {
+      "openSelector": "[role=\"dialog\"][data-state=\"open\"]",
+      "_note": "Radix menyisakan node dialog saat animasi close; pakai [data-state=\"open\"] kalau butuh membedakan."
+    }
+  },
+
+  "bahasa": {
+    "_note": "App bilingual ID/EN, switcher ada di halaman login (teks 'Bahasa' / 'Language'). Kalau spec bisa jalan di dua bahasa, pakai regex alternation seperti /Simpan|Save/i.",
+    "tombol": {
+      "simpan": ["Simpan", "Save"],
+      "batal": ["Batal", "Cancel"],
+      "hapus": ["Hapus", "Delete"],
+      "tambah": ["Tambah", "Add"],
+      "cari": ["Cari", "Search"],
+      "kembali": ["Kembali", "Back"]
+    },
+    "_confidence": "crosschecked"
+  }
+}

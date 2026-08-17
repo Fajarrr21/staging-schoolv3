@@ -197,10 +197,13 @@ class TingkatPage {
     return this
   }
 
-  // cek badge Status (td ke-3) pada row dgn nama tingkat tertentu
+  // cek badge Status (td ke-2, 0-indexed) pada row dgn nama tingkat tertentu.
+  // Pakai exact-match via `span[data-slot="badge"] > p` biar "Aktif" gak nyangkut "Tidak Aktif".
   assertRowStatus(tingkatName, status) {
     cy.contains('table tbody tr', tingkatName, { timeout: 10000 })
-      .find('td').eq(2).should('contain.text', status)
+      .find('td').eq(2)
+      .find('span[data-slot="badge"] p')
+      .should('have.text', status)
     return this
   }
 
@@ -230,6 +233,17 @@ class TingkatPage {
     cy.wait(1000)
     return this
   }
+  // Instansi filter trigger = select-trigger ke-1 di toolbar (idx 0, sebelum Status idx 1).
+  // Skip pagination select via ancestor filter.
+  filterInstansiTrigger() {
+    return cy.get('[data-slot="select-trigger"]')
+      .filter((i, el) => !el.closest('[data-slot="data-grid-pagination"]'))
+      .eq(0)
+  }
+  filterInstansiValue() {
+    return this.filterInstansiTrigger().find('[data-slot="select-value"]')
+  }
+
   // status filter trigger = select-trigger ke-2 di toolbar (bukan yg di pagination).
   // by posisi, biar tetap kena walau label berubah (Status -> Aktif/Tidak Aktif/Semua)
   filterStatusTrigger() {
@@ -239,9 +253,14 @@ class TingkatPage {
   }
   perPageTrigger() { return cy.get('[data-slot="data-grid-pagination"] [data-slot="select-trigger"]') }
 
-  // Filter Instansi via URL param ?office=<id> (confirmed reliable)
-  filterByOffice(base, list, officeId) {
-    cy.visit(`${base}${list}?office=${officeId}`)
+  // Filter Instansi via UI dropdown (v3 pattern — pengganti URL ?office=<id> yg lama).
+  // Reuse pola MapelPage.filterByInstansi + KalenderPage.selectFilterInstansi.
+  filterByOfficeName(name) {
+    this.filterInstansiTrigger().click({ force: true })
+    cy.get('[role="listbox"]', { timeout: 8000 }).should('exist')
+    cy.contains('[role="option"]', new RegExp(`^\\s*${name}\\s*$`), { timeout: 8000 })
+      .scrollIntoView({ block: 'center' })
+      .click({ force: true })
     return this
   }
 
@@ -290,11 +309,17 @@ class TingkatPage {
   }
 
   assertAllRowsStatus(status) {
+    // Exact-match via <p> di dalam badge (bukan innerText.includes yg substring-trap
+    // "Aktif" match "Tidak Aktif"). Kalau <p> ga ada, fallback ke .trim() text badge.
     cy.get('table tbody tr', { timeout: 10000 }).should(($rows) => {
       const dataRows = [...$rows].filter((r) => r.children.length >= 4)
       expect(dataRows.length, 'ada minimal 1 data row').to.be.gte(1)
-      const bad = dataRows.filter((r) => !r.children[2].innerText.includes(status))
-      expect(bad.length, `semua row Status = ${status}`).to.eq(0)
+      const bad = dataRows.filter((r) => {
+        const $badge = Cypress.$(r).find('td').eq(2).find('span[data-slot="badge"] p')
+        const text = ($badge.length ? $badge.text() : Cypress.$(r).find('td').eq(2).find('[data-slot="badge"]').text()).trim()
+        return text !== status
+      })
+      expect(bad.length, `semua row Status = ${status} (exact-match via <p>)`).to.eq(0)
     })
     return this
   }

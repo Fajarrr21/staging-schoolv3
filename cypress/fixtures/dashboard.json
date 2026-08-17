@@ -1,0 +1,50 @@
+{
+  "_status": "KERANGKA — nilai TODO/(?) belum diverifikasi ke UI asli. Jangan dipakai di spec sebelum lewat checkpoint element analysis.",
+  "_sumber": "Struktur dibangun sendiri (konvensi repo ini). Kandidat nilai dari repo qa-cazh — app sama, tapi BELUM kita buktikan. Lihat docs/REFERENSI_ELEMEN.md.",
+  "urls": {
+    "base": "https://v3.cazh.id",
+    "login": "/auth/login",
+    "list": "/dashboard"
+  },
+  "credentials": {
+    "email": "androidtesting117@gmail.com",
+    "password": "f7ki6b2u"
+  },
+  "instansi": {
+    "primary": "Sekolah Digital Indonesia",
+    "secondary": "Academy QA Engineer"
+  },
+  "testData": {
+    "prefix": "QA"
+  },
+  "timeouts": {
+    "dialog": 15000,
+    "table": 15000,
+    "dropdown": 8000,
+    "toast": 12000,
+    "api": 15000
+  },
+  "labels": {
+    "pageTitle": "Dashboard"
+  },
+  "metricCards": [
+    "Saldo Tunai",
+    "Saldo Cazhbox",
+    "Tagihan Terbayar",
+    "Tagihan Aktif",
+    "Saldo Tabungan",
+    "Siswa",
+    "Guru"
+  ],
+  "sections": [
+    "Tunggakan",
+    "Grafik Pembayaran",
+    "Transaksi Terakhir",
+    "Metode Pembayaran",
+    "Data Lembaga"
+  ],
+  "weakPin": {
+    "_catatan": "akun PIN lemah ada di app.json -> accounts.weakPin. JANGAN dipakai session global.",
+    "bannerTitle": "TODO — qa-cazh: 'Perkuat Keamanan PIN Anda' (unverified)"
+  }
+}

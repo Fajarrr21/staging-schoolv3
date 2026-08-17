@@ -1,0 +1,46 @@
+{
+  "_status": "KERANGKA — nilai TODO/(?) belum diverifikasi ke UI asli. Jangan dipakai di spec sebelum lewat checkpoint element analysis.",
+  "_sumber": "Struktur dibangun sendiri (konvensi repo ini). Kandidat nilai dari repo qa-cazh — app sama, tapi BELUM kita buktikan. Lihat docs/REFERENSI_ELEMEN.md.",
+  "urls": {
+    "base": "https://v3.cazh.id",
+    "login": "/auth/login"
+  },
+  "credentials": {
+    "email": "androidtesting117@gmail.com",
+    "password": "f7ki6b2u"
+  },
+  "instansi": {
+    "primary": "Sekolah Digital Indonesia",
+    "secondary": "Academy QA Engineer"
+  },
+  "testData": {
+    "prefix": "QA",
+    "validTime": "09:00",
+    "invalidTime": "25:00",
+    "_catatan": "cek apakah 25:00 ditolak atau auto-cap ke 23:59"
+  },
+  "timeouts": {
+    "dialog": 15000,
+    "table": 15000,
+    "dropdown": 8000,
+    "toast": 12000,
+    "api": 15000
+  },
+  "_bentuk": "modal-dari-sidebar — TIDAK punya route sendiri",
+  "sidebarPath": [
+    "Pengaturan",
+    "Kesiswaan",
+    "Perizinan"
+  ],
+  "labels": {
+    "dialogTitle": "Pengaturan Perizinan",
+    "switchBatas": "Batas Waktu Maksimal Pengajuan Perizinan",
+    "fieldJam": "Batas Waktu Maksimal Pengajuan"
+  },
+  "messages": {
+    "timeRequired": "TODO",
+    "invalidFormat": "TODO",
+    "helperOn": "TODO — qa-cazh menyimpan kalimat panjang (unverified), lihat docs §4.3",
+    "helperOff": "TODO — idem"
+  }
+}

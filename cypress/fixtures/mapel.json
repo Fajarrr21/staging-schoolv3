@@ -1,16 +1,16 @@
 {
   "urls": {
-    "base": "https://staging-new-school.cazh.id",
+    "base": "https://v3.cazh.id",
     "subjectList": "/setting/academic/subject",
     "login": "/auth/login"
   },
   "credentials": {
-    "email": "admin@cazh.id",
-    "password": "@GrahaTimur2026"
+    "email": "androidtesting117@gmail.com",
+    "password": "f7ki6b2u"
   },
   "instansi": {
-    "primary": "SMP Digital Indonesia+",
-    "secondary": "Koperasi SMP"
+    "primary": "Yayasan New School",
+    "secondary": "Sekolah Digital Indonesia"
   },
   "labels": {
     "pageTitle": "Mata Pelajaran",
@@ -47,9 +47,9 @@
     "action": 5
   },
   "testData": {
-    "existingSubject": "pjok",
-    "existingSubjectUppercase": "PJOK",
-    "existingSubjectPadded": "  pjok  ",
+    "existingSubject": "Matematika",
+    "existingSubjectUppercase": "MATEMATIKA",
+    "existingSubjectPadded": "  Matematika  ",
     "spaceOnly": "     ",
     "specialChar": "@#$! invalid",
     "longCode": "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890ABCDEFGHIJKLM",

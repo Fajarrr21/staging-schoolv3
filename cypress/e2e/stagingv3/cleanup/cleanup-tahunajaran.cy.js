@@ -1,3 +1,4 @@
+import LoginPage from '../../../support/pageobjects/LoginPage'
 // 🔧 FIX: Support both Dialog & AlertDialog
 const DIALOG = '[role="dialog"], [role="alertdialog"]'
 const DIALOG_OPEN = '[role="dialog"][data-state="open"], [role="alertdialog"][data-state="open"]'
@@ -43,22 +44,15 @@ describe('🧹 CLEANUP: Hapus massal TA test pollution', () => {
 
   it(`${DRY_RUN ? '👀 DRY RUN' : '💥 DELETE'} TA ${TEST_YEAR_MIN}-${TEST_YEAR_MAX}`, () => {
     // Login
-    cy.session('admin-cleanup', () => {
-      cy.clearAllCookies()
-      cy.clearAllLocalStorage()
-      cy.clearAllSessionStorage()
-      cy.visit(`${data.urls.base}${data.urls.login}`)
-      cy.wait(2000)
-      cy.get('input[name="email"]').type(data.credentials.email, { delay: 50 })
-      cy.get('input[type="password"]').type(data.credentials.password, { delay: 50 })
-      cy.wait(500)
-      cy.intercept('POST', '**/api/auth/login').as('loginAPI')
-      cy.get('button[type="submit"]').click()
-      cy.wait('@loginAPI', { timeout: 15000 })
-      cy.wait(1000)
-      cy.visit(`${data.urls.base}/dashboard`)
-      cy.wait(2500)
-    })
+    // Login terpusat: LoginPage.loginViaSession (cy.session + validate() + tunggu @loginAPI).
+    // Sebelumnya spec ini punya blok cy.session sendiri dengan id 'admin-cazh-session'/'admin-cleanup'
+    // tanpa validate() — sesi mati tetap dipakai dari cache, dan akun yang sama login berkali-kali.
+    LoginPage.loginViaSession(
+      data.credentials.email,
+      data.credentials.password,
+      data.urls.base,
+      data.urls.login,
+    )
 
     // Navigate to list with perPage param
     cy.visit(`${data.urls.base}/setting/academic/school-year?perPage=1000`)

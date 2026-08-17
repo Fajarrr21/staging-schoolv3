@@ -1,0 +1,69 @@
+{
+  "_status": "KERANGKA — nilai bertanda TODO/(?) belum diverifikasi ke UI asli. Jangan dipakai di spec sebelum lewat checkpoint element analysis.",
+  "_sumber": "Struktur dibangun sendiri (konvensi repo ini). Kandidat nilai berasal dari repo qa-cazh — app yang sama, tapi BELUM kita buktikan. Lihat docs/REFERENSI_ELEMEN.md.",
+  "urls": {
+    "base": "https://v3.cazh.id",
+    "login": "/auth/login",
+    "list": "/setting/student-affairs/violation-type"
+  },
+  "api": {
+    "_todo": "isi dari tab Network (XHR) saat element analysis",
+    "list": null,
+    "save": null
+  },
+  "credentials": {
+    "email": "androidtesting117@gmail.com",
+    "password": "f7ki6b2u"
+  },
+  "instansi": {
+    "primary": "Sekolah Digital Indonesia",
+    "secondary": "Academy QA Engineer"
+  },
+  "labels": {
+    "addButton": "Tambah Tipe Pelanggaran",
+    "statusActive": "Aktif",
+    "statusInactive": "Tidak Aktif"
+  },
+  "messages": {
+    "addSuccess": "TODO",
+    "editSuccess": "TODO",
+    "deleteSuccess": "TODO",
+    "instansiRequired": "TODO",
+    "namaRequired": "TODO",
+    "minPoinRequired": "TODO",
+    "maxPoinRequired": "TODO",
+    "minGreaterMax": "TODO — qa-cazh cuma menyimpan potongan 'harus lebih kecil' (unverified)",
+    "maxExceeds": "TODO — qa-cazh: 'tidak boleh lebih dari 999' (unverified)",
+    "overlap": "TODO — qa-cazh cuma menyimpan potongan 'bertumpuk' (unverified)",
+    "emptyState": "Data Tipe Pelanggaran tidak ditemukan"
+  },
+  "columns": {
+    "instansi": 0,
+    "nama": 1,
+    "minPoin": 2,
+    "maxPoin": 3,
+    "status": 4
+  },
+  "fields": {
+    "nama": {
+      "maxLength": 100,
+      "_sumber": "qa-cazh (unverified) — konfirmasi ke PRD"
+    },
+    "poin": {
+      "min": 0,
+      "max": 999,
+      "_aturan": "min < max; range antar tipe tidak boleh overlap",
+      "_sumber": "qa-cazh (unverified) — konfirmasi ke PRD"
+    }
+  },
+  "testData": {
+    "prefix": "QA"
+  },
+  "timeouts": {
+    "dialog": 15000,
+    "table": 15000,
+    "dropdown": 8000,
+    "toast": 12000,
+    "api": 15000
+  }
+}

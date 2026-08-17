@@ -1,4 +1,5 @@
 import TahunAjaranPage from '../../../../../support/pageobjects/TahunAjaranPage'
+import LoginPage from '../../../../../support/pageobjects/LoginPage'
 
 /**
  * HAPUS TAHUN AJARAN — 20 TC (No PRD → test by actual behavior)
@@ -24,21 +25,15 @@ describe('Hapus Tahun Ajaran - Fajar Ardiansyah', () => {
   })
 
   beforeEach(() => {
-    cy.session('admin-cazh-session', () => {
-      cy.clearAllCookies(); cy.clearAllLocalStorage(); cy.clearAllSessionStorage()
-      cy.visit(`${data.urls.base}${data.urls.login}`)
-      cy.wait(2000)
-      cy.get('input[name="email"]').should('be.visible').clear().type(data.credentials.email, { delay: 50 })
-      cy.get('input[type="password"]').should('be.visible').clear().type(data.credentials.password, { delay: 50 })
-      cy.wait(500)
-      cy.intercept('POST', '**/api/auth/login').as('loginAPI')
-      cy.get('button[type="submit"]').should('be.enabled').click()
-      cy.wait('@loginAPI', { timeout: 15000 }).then((i) => expect(i.response.statusCode).to.equal(200))
-      cy.wait(1000)
-      cy.visit(`${data.urls.base}/dashboard`)
-      cy.wait(2500)
-      cy.url().should('not.include', '/auth')
-    })
+    // Login terpusat: LoginPage.loginViaSession (cy.session + validate() + tunggu @loginAPI).
+    // Sebelumnya spec ini punya blok cy.session sendiri dengan id 'admin-cazh-session'/'admin-cleanup'
+    // tanpa validate() — sesi mati tetap dipakai dari cache, dan akun yang sama login berkali-kali.
+    LoginPage.loginViaSession(
+      data.credentials.email,
+      data.credentials.password,
+      data.urls.base,
+      data.urls.login,
+    )
     cy.visit(`${data.urls.base}/dashboard`)
     cy.wait(2000)
     cy.url().should('not.include', '/auth')

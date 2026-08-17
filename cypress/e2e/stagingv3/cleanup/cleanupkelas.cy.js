@@ -5,6 +5,7 @@
 // Jalankan manual saat perlu. Bisa makan waktu kalau data ratusan; ada cap MAX_DELETE biar ga runaway.
 
 const kelasPage = require('../../../support/pageobjects/KelasPage');
+const LoginPage = require('../../../support/pageobjects/LoginPage');
 
 const DIALOG = '[data-slot="dialog-content"][role="dialog"]';
 const PREFIX = 'QA';
@@ -19,14 +20,15 @@ describe('Cleanup — hapus semua data Kelas berprefix QA', () => {
   });
 
   beforeEach(() => {
-    cy.session('admin-cazh-session', () => {
-      cy.visit(`${data.urls.base}${data.urls.login}`);
-      cy.get('input[type="email"], input[name="email"]').first().type(data.credentials.email);
-      cy.get('input[type="password"], input[name="password"]').first()
-        .type(data.credentials.password, { log: false });
-      cy.contains('button', /masuk|login|sign in/i).click();
-      cy.location('pathname', { timeout: data.timeouts.dialog }).should('not.include', data.urls.login);
-    });
+    // Login terpusat: LoginPage.loginViaSession (cy.session + validate() + tunggu @loginAPI).
+    // Sebelumnya spec ini punya blok cy.session sendiri dengan id 'admin-cazh-session'/'admin-cleanup'
+    // tanpa validate() — sesi mati tetap dipakai dari cache, dan akun yang sama login berkali-kali.
+    LoginPage.loginViaSession(
+      data.credentials.email,
+      data.credentials.password,
+      data.urls.base,
+      data.urls.login,
+    );
     kelasPage.visit(listUrl());
   });
 

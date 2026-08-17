@@ -1,4 +1,5 @@
 import TingkatPage from '../../../../../support/pageobjects/TingkatPage'
+import LoginPage from '../../../../../support/pageobjects/LoginPage'
 
 describe('List Tingkat - Fajar Ardiansyah', () => {
   let data
@@ -12,28 +13,15 @@ describe('List Tingkat - Fajar Ardiansyah', () => {
   })
 
   beforeEach(() => {
-    cy.session('admin-cazh-session', () => {
-      cy.clearAllCookies()
-      cy.clearAllLocalStorage()
-      cy.clearAllSessionStorage()
-
-      cy.visit(`${data.urls.base}${data.urls.login}`)
-      cy.wait(2000)
-      cy.get('input[name="email"]').should('be.visible')
-        .clear().type(data.credentials.email, { delay: 50 })
-      cy.get('input[type="password"]').should('be.visible')
-        .clear().type(data.credentials.password, { delay: 50 })
-      cy.wait(500)
-      cy.intercept('POST', data.api.login).as('loginAPI')
-      cy.get('button[type="submit"]').should('be.enabled').click()
-      cy.wait('@loginAPI', { timeout: 15000 }).then((i) => {
-        expect(i.response.statusCode).to.equal(200)
-      })
-      cy.wait(1000)
-      cy.visit(`${data.urls.base}${data.urls.dashboard}`)
-      cy.wait(2500)
-      cy.url().should('not.include', '/auth')
-    })
+    // Login terpusat: LoginPage.loginViaSession (cy.session + validate() + tunggu @loginAPI).
+    // Sebelumnya spec ini punya blok cy.session sendiri dengan id 'admin-cazh-session'/'admin-cleanup'
+    // tanpa validate() — sesi mati tetap dipakai dari cache, dan akun yang sama login berkali-kali.
+    LoginPage.loginViaSession(
+      data.credentials.email,
+      data.credentials.password,
+      data.urls.base,
+      data.urls.login,
+    )
 
     cy.visit(`${data.urls.base}${data.urls.dashboard}`)
     cy.wait(1500)
@@ -95,11 +83,11 @@ describe('List Tingkat - Fajar Ardiansyah', () => {
         .openAddForm(data.timeouts.shortAction).addTingkat(data.instansi.primary, name)
       TingkatPage.assertToastSuccess(data.timeouts.toast)
 
-      // baris terbaru = paling atas; cek nama + status Aktif
+      // baris terbaru = paling atas; cek nama + status Aktif (exact-match via badge <p>)
       TingkatPage.visit(data.urls.base, data.urls.list)
       TingkatPage.elements.rows().first().within(() => {
         cy.contains(name).should('exist')
-        cy.get('td').eq(2).should('contain.text', data.list.statusAktif)
+        cy.get('td').eq(2).find('span[data-slot="badge"] p').should('have.text', data.list.statusAktif)
       })
     })
   })
@@ -108,21 +96,21 @@ describe('List Tingkat - Fajar Ardiansyah', () => {
   // S-04 — Filter (Instansi & Status)
   // ============================================================
   describe('S-04 — Filter', () => {
-    it('TC-LIST-006 : Filter by Instansi (Koperasi SMP) -> hanya row instansi itu', () => {
-      TingkatPage.filterByOffice(data.urls.base, data.urls.list, data.office.primaryId)
-      cy.wait(1000)
+    it(`TC-LIST-006 : Filter by Instansi (${'primary'}) -> hanya row instansi itu`, () => {
+      TingkatPage.visit(data.urls.base, data.urls.list)
+        .filterByOfficeName(data.instansi.primary)
       TingkatPage.assertAllRowsInstansi(data.instansi.primary)
     })
 
-    it('TC-LIST-007 : Filter Instansi lain (SDIT) -> konsisten semua row SDIT', () => {
-      // seed 1 data SDIT dulu biar deterministik (SDIT pasti punya minimal 1 row)
+    it('TC-LIST-007 : Filter Instansi lain (secondary) -> konsisten semua row instansi target', () => {
+      // seed 1 data secondary dulu biar deterministik (pasti punya minimal 1 row buat di-assert)
       const name = uniqueTingkat()
       TingkatPage.visit(data.urls.base, data.urls.list)
         .openAddForm(data.timeouts.shortAction).addTingkat(data.instansi.secondary, name)
       TingkatPage.assertToastSuccess(data.timeouts.toast)
 
-      TingkatPage.filterByOffice(data.urls.base, data.urls.list, data.office.secondaryId)
-      cy.wait(1000)
+      TingkatPage.visit(data.urls.base, data.urls.list)
+        .filterByOfficeName(data.instansi.secondary)
       TingkatPage.assertAllRowsInstansi(data.instansi.secondary)
     })
 
@@ -151,29 +139,27 @@ describe('List Tingkat - Fajar Ardiansyah', () => {
       TingkatPage.assertHasRows()
     })
 
-    it('TC-LIST-011 : [TBD] Filter Instansi + Status bersamaan — OBSERVASI', () => {
-      // kombinasi via Radix-after-URL belum reliable (status bisa nge-replace ?office=).
-      // Hard-assert nyusul kalau filter Status terbukti lewat URL param.
-      TingkatPage.filterByOffice(data.urls.base, data.urls.list, data.office.primaryId)
-      cy.wait(800)
+    it('TC-LIST-011 : Filter Instansi + Status Aktif (combo hard-assert)', () => {
+      // v3 setup (recon 29 Jul 2026): AQE punya 2 row -> SMA (Aktif) + SMP (Tidak Aktif).
+      // Combo AQE + Aktif -> 1 row minimum: SMA.
+      TingkatPage.visit(data.urls.base, data.urls.list)
+        .filterByOfficeName(data.instansi.tertiary)
       TingkatPage.selectStatus(data.list.statusAktif)
-      cy.wait(1500)
-      cy.url().then((url) => cy.log(`🔎 URL setelah office+status: ${url}`))
-      cy.get('body').then(($b) => {
-        const dataRows = [...$b.find('table tbody tr')].filter((r) => r.children.length >= 4)
-        cy.log(`🔎 kombinasi -> data row: ${dataRows.length}`)
-      })
+      // Hard-assert: semua row instansi = tertiary DAN status = Aktif.
+      TingkatPage.assertAllRowsInstansi(data.instansi.tertiary)
+      TingkatPage.assertAllRowsStatus(data.list.statusAktif)
+      // Bonus: SMA harus tampil (row known)
+      cy.contains('table tbody tr', data.knownRows.tertiaryAktif).should('exist')
     })
 
-    it('TC-LIST-012 : [TBD] Filter kombinasi tanpa hasil -> empty — OBSERVASI', () => {
-      TingkatPage.filterByOffice(data.urls.base, data.urls.list, data.office.secondaryId)
-      cy.wait(800)
+    it('TC-LIST-012 : Filter Instansi + Status Tidak Aktif (combo hard-assert, verif BUG-009)', () => {
+      // AQE + Tidak Aktif -> 1 row: SMP. Sekaligus re-verify BUG-009 (dulu return 0).
+      TingkatPage.visit(data.urls.base, data.urls.list)
+        .filterByOfficeName(data.instansi.tertiary)
       TingkatPage.selectStatus(data.list.statusTidakAktif)
-      cy.wait(1000)
-      cy.get('body').then(($b) => {
-        const empty = $b.text().includes(data.list.emptyText)
-        cy.log(`🔎 SDIT + Tidak Aktif -> empty state? ${empty}`)
-      })
+      TingkatPage.assertAllRowsInstansi(data.instansi.tertiary)
+      TingkatPage.assertAllRowsStatus(data.list.statusTidakAktif)
+      cy.contains('table tbody tr', data.knownRows.tertiaryTidakAktif).should('exist')
     })
   })
 
