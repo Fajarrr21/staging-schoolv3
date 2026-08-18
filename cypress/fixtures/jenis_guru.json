@@ -1,49 +1,64 @@
 {
-  "_status": "KERANGKA — nilai bertanda TODO/(?) belum diverifikasi ke UI asli. Jangan dipakai di spec sebelum lewat checkpoint element analysis.",
-  "_sumber": "Struktur dibangun sendiri (konvensi repo ini). Kandidat nilai berasal dari repo qa-cazh — app yang sama, tapi BELUM kita buktikan. Lihat docs/REFERENSI_ELEMEN.md.",
+  "_status": "TERVERIFIKASI 18 Agustus 2026 — nilai dari DOM + Network asli. 100% lengkap + 1 temuan (duplikat diizinkan).",
+  "_sumber": "Element analysis manual pada https://v3.cazh.id.",
   "urls": {
     "base": "https://v3.cazh.id",
     "login": "/auth/login",
-    "list": "TODO — route DUGAAN /setting/staffing/teacher-type, WAJIB dibuka manual dulu"
+    "list": "/setting/staffing/teacher-type"
   },
   "api": {
-    "_todo": "isi dari tab Network (XHR) saat element analysis",
-    "list": null,
-    "save": null
+    "list": "**/api/proxy/setting/staffing/teacher_type*",
+    "save": "**/api/proxy/setting/staffing/teacher_type"
   },
   "credentials": {
     "email": "androidtesting117@gmail.com",
     "password": "f7ki6b2u"
   },
   "instansi": {
-    "primary": "Sekolah Digital Indonesia",
-    "secondary": "Academy QA Engineer"
+    "primary": "Academy QA Engineer",
+    "secondary": "Sekolah Digital Indonesia",
+    "options": {
+      "Academy Cazh": "6a66106c95849c0019d19faa",
+      "Academy QA Engineer": "6a647cd1c1a15d00193aa39a",
+      "Sekolah Digital Indonesia": "6a4ca54faab9f40019199d3e",
+      "Yayasan New School": "6a4c61fecace47001a67a887"
+    }
   },
   "labels": {
     "addButton": "Tambah Jenis Guru",
-    "statusActive": "Aktif",
-    "statusInactive": "Tidak Aktif"
+    "save": "Simpan",
+    "statusActive": "Aktif"
   },
   "messages": {
-    "addSuccess": "TODO",
-    "editSuccess": "TODO",
-    "deleteSuccess": "TODO",
-    "namaRequired": "TODO",
-    "namaDuplicate": "TODO",
-    "emptyState": "TODO"
+    "addSuccess": "Jenis Guru berhasil ditambahkan",
+    "addSuccessDesc": "Data jenis guru baru telah berhasil disimpan.",
+    "editSuccess": "Jenis Guru berhasil diperbarui",
+    "editSuccessDesc": "Data jenis guru telah berhasil diperbarui.",
+    "deleteSuccess": "Jenis Guru berhasil dihapus",
+    "deleteSuccessDesc": "Data jenis guru telah berhasil dihapus.",
+    "instansiRequired": "Instansi wajib diisi",
+    "namaRequired": "Jenis Guru wajib diisi",
+    "emptyState": "Data Jenis Guru tidak ditemukan"
   },
   "columns": {
     "instansi": 0,
     "nama": 1,
-    "status": 2
-  },
-  "fields": {
-    "nama": {
-      "_todo": "batas & aturan karakter — cek PRD"
-    }
+    "status": 2,
+    "dibuatPada": 3
   },
   "testData": {
-    "prefix": "QA"
+    "prefix": "QA",
+    "instansi": "Academy QA Engineer",
+    "nama": "QA Auto Guru"
+  },
+  "notes": {
+    "duplikat": "DIIZINKAN — save POST balik 200 (bukan 409). Beda dari Jenis Tagihan yang menolak. Temuan: konfirmasi ke PRD apakah seharusnya unique per instansi sebelum di-log sebagai bug.",
+    "saveStatus": "POST sukses = 200 OK (bukan 201 Created seperti proxy-banking).",
+    "endpoint": "URL halaman 'teacher-type' (hyphen) tapi endpoint 'teacher_type' (underscore)."
+  },
+  "pagination": {
+    "totalDefault": 59,
+    "perPage": 10
   },
   "timeouts": {
     "dialog": 15000,

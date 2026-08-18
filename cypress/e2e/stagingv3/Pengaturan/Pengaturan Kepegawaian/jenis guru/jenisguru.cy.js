@@ -3,26 +3,21 @@
 // Fixture: cypress/fixtures/jenis_guru.json
 //
 // =========================================================================
-// STATUS: BELUM TERVERIFIKASI — baca ini dulu.
+// STATUS: CONFIG TERVERIFIKASI 18 Agustus 2026 (DOM + Network asli).
 // =========================================================================
-// Config POM & fixture masih berisi nilai hipotesis bertanda (?) / TODO
-// (sumber: repo qa-cazh, app-nya sama, tapi belum kita buktikan sendiri).
+// Route, field, kolom, endpoint, dan SEMUA pesan (sukses+desc/validasi/empty)
+// sudah dibuktikan ke app. Assertion memakai TEKS pesan yang pasti.
 //
-// RUN PERTAMA = ALAT VERIFIKASI, bukan laporan cakupan.
-//   1) Lihat blok "S-00 — Kontrak config" duluan. Blok itu memverifikasi
-//      asumsi paling dasar: route benar, tabel ada, tombol Tambah ada,
-//      dan field yang dideklarasikan di config memang ada di form.
-//   2) Kalau S-00 merah, SEMUA blok di bawahnya tidak ada artinya —
-//      perbaiki config POM dulu, jangan menilai hasilnya.
-//   3) Setelah S-00 hijau, kegagalan di blok lain baru bermakna dan bisa
-//      langsung dipakai sebagai hasil element analysis.
+// ⚠️ TARGET = PRODUCTION (v3.cazh.id). Spec ini membuat & menghapus data nyata.
+//    Setelah run, sapu dengan cleanup: cypress/e2e/stagingv3/cleanup/cleanupjenisguru.cy.js
 //
-// JANGAN dilaporkan sebagai cakupan resmi sebelum urutan CLAUDE.md dijalani:
-// PRD -> TC sheet (ACC) -> element analysis (ACC) -> naikkan nilai (?) -> spec final.
-//
-// Assertion pesan validasi sengaja memakai assertNotSilent(), BUKAN teks
-// tertentu: teks pesannya belum terverifikasi, jadi yang di-assert adalah
-// kewajiban minimum app — tidak boleh diam.
+// Khas modul ini (lihat POM):
+//   - Form dialog 2 field (Instansi + Jenis Guru). Tidak ada field Status.
+//   - Save POST balik 200 (bukan 201). Tombol Simpan type=submit.
+//   - Toast punya title + description.
+//   - DUPLIKAT DIIZINKAN (tidak ada 409) — S-06 mendokumentasikan behavior AKTUAL,
+//     BUKAN expect error. Kalau PRD memutuskan Jenis Guru harus unique per instansi,
+//     balik S-06 jadi expect-penolakan + log BUG.
 
 import JenisGuru from '../../../../../support/pageobjects/JenisGuruPage';
 import LoginPage from '../../../../../support/pageobjects/LoginPage';
@@ -45,7 +40,7 @@ describe('Jenis Guru — JGR', () => {
   });
 
   // ==========================================================================
-  // S-00 — Kontrak config. Kalau blok ini merah, jangan lanjut menilai blok lain.
+  // S-00 — Kontrak config
   // ==========================================================================
   describe('S-00 — Kontrak config', () => {
     it('TC-JGR-001 | Happy | Halaman list bisa dibuka & tabel tampil', () => {
@@ -54,12 +49,12 @@ describe('Jenis Guru — JGR', () => {
       JenisGuru.elements.table().should('be.visible');
     });
 
-    it('TC-JGR-002 | Happy | Tombol Tambah ada & membuka form', () => {
+    it('TC-JGR-002 | Happy | Tombol Tambah membuka dialog dengan judul benar', () => {
       JenisGuru.visit().openAddModal();
-      JenisGuru.assertDialogOpen();
+      JenisGuru.assertDialogOpen(d.labels.addButton);
     });
 
-    it('TC-JGR-003 | Happy | Semua field di config benar-benar ada di form', () => {
+    it('TC-JGR-003 | Happy | Semua field (2) ada di form', () => {
       JenisGuru.visit().openAddModal();
       Object.keys(JenisGuru.cfg.fields).forEach((key) => {
         JenisGuru.elements.fieldItem(key).should('exist');
@@ -71,21 +66,22 @@ describe('Jenis Guru — JGR', () => {
   // S-01 — Tambah
   // ==========================================================================
   describe('S-01 — Tambah', () => {
-    it('TC-JGR-010 | Happy | Tambah data valid -> muncul di list', () => {
+    it('TC-JGR-010 | Happy | Tambah valid -> toast (title+desc) & muncul di list', () => {
       const nama = uniq();
-      JenisGuru.visit().openAddModal().fillForm({ instansi: d.instansi.primary, nama }).saveExpectSuccess();
+      JenisGuru.visit().tambah({ instansi: d.testData.instansi, nama });
+      JenisGuru.assertToast(d.messages.addSuccess, d.messages.addSuccessDesc);
       JenisGuru.assertRowExists(nama);
     });
 
     it('TC-JGR-011 | Happy | Data persist setelah reload halaman', () => {
       const nama = uniq();
-      JenisGuru.visit().openAddModal().fillForm({ instansi: d.instansi.primary, nama }).saveExpectSuccess();
+      JenisGuru.visit().tambah({ instansi: d.testData.instansi, nama });
       JenisGuru.assertPersisted(nama);
     });
 
-    it('TC-JGR-012 | Positif | Batal menutup form tanpa menyimpan', () => {
+    it('TC-JGR-012 | Positif | Tutup dialog tanpa menyimpan -> data tidak dibuat', () => {
       const nama = uniq();
-      JenisGuru.visit().openAddModal().fillForm({ instansi: d.instansi.primary, nama }).cancel();
+      JenisGuru.visit().openAddModal().fillForm({ instansi: d.testData.instansi, nama }).closeByX();
       JenisGuru.assertDialogClosed().assertRowNotExists(nama);
     });
   });
@@ -94,9 +90,10 @@ describe('Jenis Guru — JGR', () => {
   // S-02 — Validasi
   // ==========================================================================
   describe('S-02 — Validasi', () => {
-    it('TC-JGR-020 | Negatif | Simpan form kosong -> FE tidak boleh diam', () => {
+    it('TC-JGR-020 | Negatif | Simpan form kosong -> 2 pesan wajib tampil', () => {
       JenisGuru.visit().openAddModal().save();
-      JenisGuru.assertNotSilent();
+      JenisGuru.assertFieldError('instansi', d.messages.instansiRequired);
+      JenisGuru.assertFieldError('nama', d.messages.namaRequired);
     });
 
     it('TC-JGR-021 | Negatif | Simpan form kosong -> dialog tetap terbuka', () => {
@@ -111,13 +108,13 @@ describe('Jenis Guru — JGR', () => {
   describe('S-03 — List', () => {
     it('TC-JGR-030 | Happy | Data terbaru muncul di baris teratas', () => {
       const nama = uniq();
-      JenisGuru.visit().openAddModal().fillForm({ instansi: d.instansi.primary, nama }).saveExpectSuccess();
+      JenisGuru.visit().tambah({ instansi: d.testData.instansi, nama });
       JenisGuru.visit().assertFirstRowCell('nama', nama);
     });
 
     it('TC-JGR-031 | Positif | Search menemukan data yang baru dibuat', () => {
       const nama = uniq();
-      JenisGuru.visit().openAddModal().fillForm({ instansi: d.instansi.primary, nama }).saveExpectSuccess();
+      JenisGuru.visit().tambah({ instansi: d.testData.instansi, nama });
       JenisGuru.visit().search(nama).assertRowExists(nama);
     });
 
@@ -133,17 +130,18 @@ describe('Jenis Guru — JGR', () => {
   describe('S-04 — Edit', () => {
     it('TC-JGR-040 | Happy | Form edit ter-prefill sesuai baris', () => {
       const nama = uniq();
-      JenisGuru.visit().openAddModal().fillForm({ instansi: d.instansi.primary, nama }).saveExpectSuccess();
+      JenisGuru.visit().tambah({ instansi: d.testData.instansi, nama });
       JenisGuru.visit().search(nama).openEditByText(nama);
-      JenisGuru.assertFormPrefilled({ nama: nama });
+      JenisGuru.assertFormPrefilled({ nama });
     });
 
-    it('TC-JGR-041 | Happy | Perubahan tersimpan & persist', () => {
+    it('TC-JGR-041 | Happy | Perubahan nama tersimpan & persist', () => {
       const nama = uniq();
       const namaBaru = uniq();
-      JenisGuru.visit().openAddModal().fillForm({ instansi: d.instansi.primary, nama }).saveExpectSuccess();
+      JenisGuru.visit().tambah({ instansi: d.testData.instansi, nama });
       JenisGuru.visit().search(nama).openEditByText(nama)
-        .fill('nama', namaBaru).saveExpectSuccess();
+        .fill('nama', namaBaru)
+        .saveEditExpectSuccess();
       JenisGuru.assertPersisted(namaBaru);
     });
   });
@@ -154,16 +152,37 @@ describe('Jenis Guru — JGR', () => {
   describe('S-05 — Hapus', () => {
     it('TC-JGR-050 | Positif | Dialog konfirmasi muncul sebelum menghapus', () => {
       const nama = uniq();
-      JenisGuru.visit().openAddModal().fillForm({ instansi: d.instansi.primary, nama }).saveExpectSuccess();
+      JenisGuru.visit().tambah({ instansi: d.testData.instansi, nama });
       JenisGuru.visit().search(nama).openDeleteByText(nama);
       JenisGuru.assertDialogOpen();
     });
 
-    it('TC-JGR-051 | Happy | Hapus data -> hilang dari list & tidak persist', () => {
+    it('TC-JGR-051 | Happy | Hapus data -> toast sukses, hilang & tidak persist', () => {
       const nama = uniq();
-      JenisGuru.visit().openAddModal().fillForm({ instansi: d.instansi.primary, nama }).saveExpectSuccess();
+      JenisGuru.visit().tambah({ instansi: d.testData.instansi, nama });
       JenisGuru.visit().search(nama).deleteByText(nama);
+      JenisGuru.assertToast(d.messages.deleteSuccess, d.messages.deleteSuccessDesc);
       JenisGuru.assertNotPersisted(nama);
+    });
+  });
+
+  // ==========================================================================
+  // S-06 — Duplikat (TEMUAN, mendokumentasikan behavior AKTUAL)
+  // ==========================================================================
+  describe('S-06 — Duplikat (temuan: diizinkan)', () => {
+    // Jenis Guru MENGIZINKAN nama+instansi duplikat (POST tetap 200, tidak 409).
+    // TC ini membuktikan behavior aktual itu, BUKAN mengunci sebagai "benar".
+    // Jika PRD memutuskan harus unique per instansi -> ubah jadi expect-penolakan
+    // + assertErrorToast + log BUG.
+    it('TC-JGR-060 | Temuan | Duplikat nama+instansi DIIZINKAN (ter-create 2x)', () => {
+      const nama = uniq();
+      JenisGuru.visit().tambah({ instansi: d.testData.instansi, nama });
+      // Buat lagi dengan kombinasi identik — masih sukses (bukan ditolak).
+      JenisGuru.visit().tambah({ instansi: d.testData.instansi, nama });
+      JenisGuru.assertToast(d.messages.addSuccess);
+      // Terbukti ada >= 2 baris dengan nama sama.
+      JenisGuru.visit().search(nama);
+      cy.get('table tbody tr').should('have.length.gte', 2);
     });
   });
 });
