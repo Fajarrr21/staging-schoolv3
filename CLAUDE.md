@@ -2,7 +2,21 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-Cypress E2E test suite for the CARDS School staging app (`https://v3.cazh.id`). Tests, folder names, and test descriptions are written in **Bahasa Indonesia** — match that language when adding tests.
+Cypress E2E test suite for the CARDS School **production** app (`https://v3.cazh.id`). Tests, folder names, and test descriptions are written in **Bahasa Indonesia** — match that language when adding tests.
+
+> ⚠️ **TARGET = PRODUCTION.** `https://v3.cazh.id` adalah sistem **live**. Nama repo/folder (`schoolv3-automation`, `cypress/e2e/stagingv3/`) dan istilah "staging" di dokumen ini adalah **legacy** — jangan menyimpulkan staging dari nama itu.
+> - Spec CRUD (Tambah/Edit/Hapus) **membuat & menghapus data produksi nyata** (mis. `proxy-banking/bill-types`). Perlakukan menjalankan spec sebagai aksi yang mengubah data prod.
+> - **Jangan run spec tanpa diminta** — user yang menjalankan.
+> - **Cleanup wajib** setelah run CRUD: `cypress/e2e/stagingv3/cleanup/cleanup<modul>.cy.js`. Harus **column-scoped ke kolom Nama + `startsWith("QA")`** — JANGAN pakai `purgeByPrefix` base yang match `includes` seluruh baris (bisa kena data prod asli).
+
+### Environment (production & staging dalam SATU repo)
+
+- **URL per-env**: `cypress/config/environments.js` (aman di-commit). **Kredensial per-env**: `cypress.env.json` di key `creds.<env>` — **RAHASIA, git-ignored, JANGAN commit** (template: `cypress.env.example.json`). `cypress.config.js` menggabungkan keduanya → override `baseUrl` + taruh ke `Cypress.env`; `LoginPage.loginViaSession` memakainya. Jadi **tidak ada spec/fixture yang perlu diedit** saat pindah env.
+- ⚠️ **Environment WAJIB dipilih eksplisit — TIDAK ADA default.** Run tanpa flag `environment` akan **dibatalkan** (pengaman anti tidak sengaja menyentuh production live). Ini disengaja; jangan "perbaiki" dengan memberi default.
+  - `npm run cy:<modul> -- --env environment=production` (prod live)
+  - `npm run cy:<modul> -- --env environment=staging` (staging)
+  - Atau script langsung: `cy:prod` / `cy:staging` / `open:prod` / `open:staging`.
+- Sesi login di-namespace per-env (`session-<env>-<email>`) — sesi prod & staging tidak saling menimpa.
 
 ## App reference (baca duluan sebelum modul baru)
 

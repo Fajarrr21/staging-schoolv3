@@ -3,3 +3,7 @@ cypress/screenshots/
 cypress/videos/
 node_modules/
 Bug_Tracker_QA_CARDS.xlsx
+
+# Kredensial per-environment — RAHASIA, JANGAN commit.
+# Template (aman): cypress.env.example.json
+cypress.env.json

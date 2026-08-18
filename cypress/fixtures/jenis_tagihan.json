@@ -1,50 +1,60 @@
 {
-  "_status": "KERANGKA — nilai TODO/(?) belum diverifikasi ke UI asli. Jangan dipakai di spec sebelum lewat checkpoint element analysis.",
-  "_sumber": "Struktur dibangun sendiri (konvensi repo ini). Kandidat nilai dari repo qa-cazh — app sama, tapi BELUM kita buktikan. Lihat docs/REFERENSI_ELEMEN.md.",
+  "_status": "TERVERIFIKASI 18 Agustus 2026 — nilai dari DOM + Network asli. 100% lengkap (8 pesan kena).",
+  "_sumber": "Element analysis manual pada https://v3.cazh.id.",
   "urls": {
     "base": "https://v3.cazh.id",
     "login": "/auth/login",
-    "list": "TODO — route DUGAAN /setting/invoice/invoice-type, WAJIB dibuka manual"
+    "list": "/setting/invoice/invoice-type"
+  },
+  "api": {
+    "list": "**/api/proxy-banking/bill-types*",
+    "save": "**/api/proxy-banking/bill-types"
   },
   "credentials": {
     "email": "androidtesting117@gmail.com",
     "password": "f7ki6b2u"
   },
   "instansi": {
-    "primary": "Sekolah Digital Indonesia",
-    "secondary": "Academy QA Engineer"
-  },
-  "testData": {
-    "prefix": "QA"
-  },
-  "timeouts": {
-    "dialog": 15000,
-    "table": 15000,
-    "dropdown": 8000,
-    "toast": 12000,
-    "api": 15000
+    "primary": "Academy QA Engineer",
+    "secondary": "Sekolah Digital Indonesia",
+    "options": {
+      "Academy Cazh": "6a66106c95849c0019d19faa",
+      "Academy QA Engineer": "6a647cd1c1a15d00193aa39a",
+      "Sekolah Digital Indonesia": "6a4ca54faab9f40019199d3e",
+      "Yayasan New School": "6a4c61fecace47001a67a887"
+    }
   },
   "labels": {
-    "addButton": "Tambah Jenis Tagihan"
+    "addButton": "Tambah Jenis Tagihan",
+    "save": "Simpan",
+    "statusActive": "Aktif",
+    "statusInactive": "Tidak Aktif"
   },
-  "opsiPengulangan": [
-    "Sekaligus Lunas",
-    "Setiap Minggu",
-    "Setiap Bulan",
-    "Setiap 2 Bulan",
-    "Setiap 3 Bulan",
-    "Setiap 4 Bulan",
-    "Setiap 6 Bulan",
-    "Setiap Tahun"
-  ],
+  "options": {
+    "pengulangan": [
+      "Sekaligus Lunas",
+      "Setiap Bulan",
+      "Setiap 2 Bulan",
+      "Setiap 3 Bulan",
+      "Setiap 4 Bulan",
+      "Setiap 6 Bulan",
+      "Setiap Tahun",
+      "Setiap Minggu"
+    ]
+  },
   "aturan": {
-    "duplikat": "kombinasi Nama + Instansi + Pengulangan + Periode (BUKAN cuma nama)",
-    "_sumber": "qa-cazh (unverified) — konfirmasi ke PRD"
+    "duplikat": "kombinasi Nama + Instansi + Pengulangan + Periode → POST balik 409 Conflict",
+    "formProgresif": "field Mengulang Setiap + Tanggal Mulai/Akhir baru muncul SETELAH Pengulangan dipilih"
   },
   "messages": {
-    "addSuccess": "TODO",
-    "duplicate": "TODO",
-    "emptyState": "TODO"
+    "addSuccess": "Jenis tagihan berhasil ditambahkan.",
+    "instansiRequired": "Instansi wajib diisi",
+    "namaRequired": "Nama Jenis Tagihan wajib diisi",
+    "pengulanganRequired": "Pengulangan Tagihan wajib diisi",
+    "duplicate": "Jenis tagihan dengan nama, instansi, pengulangan, dan periode yang sama sudah ada",
+    "emptyState": "Data Jenis Tagihan tidak ditemukan",
+    "editSuccess": "Jenis tagihan berhasil diubah.",
+    "deleteSuccess": "Jenis tagihan berhasil dihapus."
   },
   "columns": {
     "instansi": 0,
@@ -52,5 +62,25 @@
     "pengulangan": 2,
     "periode": 3,
     "status": 4
+  },
+  "testData": {
+    "prefix": "QA",
+    "instansi": "Academy QA Engineer",
+    "nama": "QA Auto Bill Type",
+    "pengulangan": "Setiap Bulan",
+    "mengulangSetiap": "1",
+    "tanggalMulai": "01/08/2026",
+    "tanggalAkhir": "01/09/2026"
+  },
+  "pagination": {
+    "totalDefault": 26,
+    "perPage": 10
+  },
+  "timeouts": {
+    "dialog": 15000,
+    "table": 15000,
+    "dropdown": 8000,
+    "toast": 12000,
+    "api": 15000
   }
 }

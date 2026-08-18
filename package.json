@@ -127,7 +127,12 @@
     "cy:ppdbweb": "cypress run --spec \"cypress/e2e/stagingv3/Anggota/ppdb pengaturan web/*.cy.js\"",
     "test:ppdbweb": "run-s report:clean cy:ppdbweb report:build --continue-on-error",
     "cy:dashboard": "cypress run --spec \"cypress/e2e/stagingv3/Dashboard/*.cy.js\"",
-    "test:dashboard": "run-s report:clean cy:dashboard report:build --continue-on-error"
+    "test:dashboard": "run-s report:clean cy:dashboard report:build --continue-on-error",
+    "_comment:env": "WAJIB pilih environment tiap run — TIDAK ADA default (pengaman anti nyentuh production live). Tambahkan '-- --env environment=production' ATAU '-- --env environment=staging' di belakang script APA PUN (mis. 'npm run cy:jenistagihan -- --env environment=staging'). Run tanpa flag = DIBATALKAN. Sumber URL+kredensial: cypress/config/environments.js (isi dulu blok staging).",
+    "cy:prod": "cypress run --env environment=production",
+    "cy:staging": "cypress run --env environment=staging",
+    "open:prod": "cypress open --env environment=production",
+    "open:staging": "cypress open --env environment=staging"
   },
   "devDependencies": {
     "cypress": "^14.0.2",

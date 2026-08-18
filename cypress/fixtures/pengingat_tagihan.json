@@ -1,21 +1,83 @@
 {
-  "_status": "KERANGKA — nilai TODO/(?) belum diverifikasi ke UI asli. Jangan dipakai di spec sebelum lewat checkpoint element analysis.",
-  "_sumber": "Struktur dibangun sendiri (konvensi repo ini). Kandidat nilai dari repo qa-cazh — app sama, tapi BELUM kita buktikan. Lihat docs/REFERENSI_ELEMEN.md.",
+  "_status": "TERVERIFIKASI 18 Agustus 2026 — nilai diambil dari DOM + Network asli. Sisa TODO hanya untuk TC yang belum disentuh (edit/hapus/empty state).",
+  "_sumber": "Element analysis manual pada https://v3.cazh.id (bukan lagi kandidat qa-cazh).",
   "urls": {
     "base": "https://v3.cazh.id",
     "login": "/auth/login",
-    "list": "TODO — route DUGAAN /setting/invoice/invoice-reminder, WAJIB dibuka manual"
+    "list": "/setting/invoice/invoice-reminder",
+    "add": "/setting/invoice/invoice-reminder/add"
+  },
+  "api": {
+    "list": "**/api/proxy-banking/bill-reminders*",
+    "save": "**/api/proxy-banking/bill-reminders"
   },
   "credentials": {
     "email": "androidtesting117@gmail.com",
     "password": "f7ki6b2u"
   },
   "instansi": {
-    "primary": "Sekolah Digital Indonesia",
-    "secondary": "Academy QA Engineer"
+    "primary": "Academy QA Engineer",
+    "secondary": "Sekolah Digital Indonesia",
+    "options": {
+      "Academy Cazh": "6a66106c95849c0019d19faa",
+      "Academy QA Engineer": "6a647cd1c1a15d00193aa39a",
+      "Sekolah Digital Indonesia": "6a4ca54faab9f40019199d3e",
+      "Yayasan New School": "6a4c61fecace47001a67a887"
+    }
+  },
+  "labels": {
+    "addButton": "Tambah Pengingat",
+    "save": "Simpan",
+    "cancel": "Batal",
+    "statusActive": "Aktif"
+  },
+  "options": {
+    "target": {
+      "Semua Tagihan": "ALL_BILLS",
+      "Hanya Belum Lunas": "ONLY_UNPAID"
+    },
+    "pengulangan": [
+      "Sekaligus Lunas",
+      "Setiap Bulan",
+      "Setiap 2 Bulan",
+      "Setiap 3 Bulan",
+      "Setiap 4 Bulan",
+      "Setiap 6 Bulan",
+      "Setiap Tahun",
+      "Setiap Minggu"
+    ]
+  },
+  "messages": {
+    "addSuccess": "Pengingat Tagihan berhasil ditambahkan",
+    "instansiRequired": "Instansi wajib diisi",
+    "tipeRequired": "Tipe wajib diisi",
+    "judulRequired": "Judul wajib diisi",
+    "pesanRequired": "Pesan wajib diisi",
+    "targetRequired": "Target wajib diisi",
+    "pengulanganRequired": "Pengulangan Tagihan wajib diisi",
+    "tanggalMulaiRequired": "Tanggal Mulai wajib diisi",
+    "jamRequired": "Jam wajib diisi",
+    "editSuccess": "TODO — capture pas edit /{id} berhasil",
+    "deleteSuccess": "TODO — capture pas konfirmasi hapus",
+    "emptyState": "TODO — capture pas tabel kosong / filter nihil"
+  },
+  "columns": {
+    "instansi": 0,
+    "tanggal": 1,
+    "pesan": 2,
+    "jadwal": 3,
+    "status": 4
   },
   "testData": {
-    "prefix": "QA"
+    "prefix": "QA",
+    "instansi": "Academy QA Engineer",
+    "tipeValue": "70",
+    "tipeLabel": "SPP",
+    "judul": "Judul Pengingat QA Otomatis",
+    "pesan": "Pesan pengingat otomatis dari Cypress",
+    "target": "Semua Tagihan",
+    "pengulangan": "Setiap Bulan",
+    "jam": "09:00"
   },
   "timeouts": {
     "dialog": 15000,
@@ -23,20 +85,5 @@
     "dropdown": 8000,
     "toast": 12000,
     "api": 15000
-  },
-  "labels": {
-    "addButton": "Tambah Pengingat"
-  },
-  "_blokir": "sebagian expected menyebut pengiriman push notification / WA — TIDAK bisa diverifikasi lewat UI. Pilah saat bikin TC.",
-  "messages": {
-    "addSuccess": "TODO",
-    "emptyState": "TODO"
-  },
-  "columns": {
-    "instansi": 0,
-    "jenisTagihan": 1,
-    "judul": 2,
-    "target": 3,
-    "status": 4
   }
 }

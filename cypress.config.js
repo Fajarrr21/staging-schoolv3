@@ -1,6 +1,7 @@
 const { defineConfig } = require("cypress");
 const fs = require("fs");
 const path = require("path");
+const environments = require("./cypress/config/environments");
 
 module.exports = defineConfig({
   reporter: "mochawesome",
@@ -12,6 +13,8 @@ module.exports = defineConfig({
     timestamp: "mmddyyyy_HHMMss",
   },
   e2e: {
+    // Default statis = production. Nilai ini DI-OVERRIDE per environment di
+    // setupNodeEvents (lihat blok "ENVIRONMENT SWITCH" di bawah).
     baseUrl: "https://v3.cazh.id",
     viewportWidth: 1366,
     viewportHeight: 768,
@@ -30,6 +33,69 @@ module.exports = defineConfig({
     specPattern: "cypress/e2e/stagingv3/**/*.cy.{js,ts}",
     downloadsFolder: "cypress/downloads",
     setupNodeEvents(on, config) {
+      // =====================================================================
+      // ENVIRONMENT SWITCH — satu repo melayani production & staging.
+      // Sumber URL + kredensial: cypress/config/environments.js.
+      //
+      // ⚠️ PENGAMAN: environment WAJIB dipilih eksplisit — TIDAK ADA default.
+      // Tujuannya: lupa memilih = run DIBATALKAN, jadi mustahil tidak sengaja
+      // menyentuh production yang live.
+      //   Pilih via: --env environment=production | --env environment=staging
+      //   (atau set CYPRESS_ENV=... sebagai fallback).
+      // =====================================================================
+      const environment = config.env.environment || process.env.CYPRESS_ENV;
+      if (!environment) {
+        throw new Error(
+          [
+            "",
+            "==================================================================",
+            "✖ STOP: environment belum dipilih — tidak ada yang dijalankan.",
+            "  Target ini TIDAK punya default (production = sistem LIVE).",
+            "",
+            "  Pilih salah satu:",
+            "    PRODUCTION :  -- --env environment=production",
+            "    STAGING    :  -- --env environment=staging",
+            "",
+            "  Contoh: npm run cy:jenistagihan -- --env environment=staging",
+            "==================================================================",
+            "",
+          ].join("\n")
+        );
+      }
+      const envCfg = environments[environment];
+      if (!envCfg) {
+        throw new Error(
+          `environment "${environment}" tidak dikenal. Pilihan: ${Object.keys(
+            environments
+          ).join(", ")}`
+        );
+      }
+      // Kredensial dari cypress.env.json (RAHASIA, git-ignored) — bukan dari
+      // environments.js. Cypress memuat cypress.env.json ke config.env otomatis.
+      const creds = (config.env.creds || {})[environment];
+      if (!creds || !creds.email || !creds.password) {
+        throw new Error(
+          [
+            "",
+            "==================================================================",
+            `✖ Kredensial "${environment}" tidak ditemukan.`,
+            "  Buat file cypress.env.json (lihat cypress.env.example.json) berisi:",
+            `    { "creds": { "${environment}": { "email": "...", "password": "..." } } }`,
+            "  File ini di-git-ignore (jangan commit).",
+            "==================================================================",
+            "",
+          ].join("\n")
+        );
+      }
+      config.baseUrl = envCfg.baseUrl;
+      config.env.environment = environment;
+      config.env.appBase = envCfg.baseUrl;
+      config.env.appLogin = envCfg.loginPath;
+      config.env.appEmail = creds.email;
+      config.env.appPassword = creds.password;
+      // eslint-disable-next-line no-console
+      console.log(`\n🎯 CYPRESS ENVIRONMENT = ${environment} (${envCfg.baseUrl})\n`);
+
       // ⬇️ FIX-007 — task untuk menguji fitur Export/Download.
       // Sebelumnya modul yang punya tombol Export cuma bisa dicek "tombolnya keklik",
       // tidak sampai isi filenya. Task ini jalan di Node (punya akses fs), dipanggil
@@ -129,6 +195,9 @@ module.exports = defineConfig({
           }
         }
       });
+
+      // WAJIB: kembalikan config supaya override baseUrl + env di atas berlaku.
+      return config;
     },
   },
 });

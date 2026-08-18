@@ -86,24 +86,36 @@ class LoginPage {
     const dashboard = opts.dashboard || DASHBOARD_PATH;
     const apiLogin = opts.apiLogin || API_LOGIN;
 
+    // ENVIRONMENT SWITCH — kalau run dijalankan dengan environment tertentu
+    // (--env environment=staging / CYPRESS_ENV=staging), cypress.config.js sudah
+    // menaruh URL + kredensial env itu ke Cypress.env. Nilai itu MENANG atas
+    // argumen fixture (yang default production). Inilah yang bikin satu repo
+    // melayani dua environment tanpa mengedit tiap spec/fixture.
+    const environment = Cypress.env('environment') || 'production';
+    const e = Cypress.env('appEmail') || email;
+    const p = Cypress.env('appPassword') || password;
+    const b = Cypress.env('appBase') || baseUrl;
+    const l = Cypress.env('appLogin') || loginPath;
+
     cy.session(
-      `session-${email}`,
+      // Namespace per-env: sesi production & staging tidak boleh saling menimpa.
+      `session-${environment}-${e}`,
       () => {
         cy.intercept('POST', apiLogin).as('loginAPI');
-        cy.visit(`${baseUrl}${loginPath}`);
-        this.elements.emailInput().should('be.visible').clear().type(email);
-        this.elements.passwordInput().should('be.visible').clear().type(password, { log: false });
+        cy.visit(`${b}${l}`);
+        this.elements.emailInput().should('be.visible').clear().type(e);
+        this.elements.passwordInput().should('be.visible').clear().type(p, { log: false });
         this.elements.submitBtn().should('be.enabled').click();
 
         cy.wait('@loginAPI', { timeout: redirect })
           .its('response.statusCode')
           .should('eq', 200);
-        cy.url({ timeout: redirect }).should('not.include', loginPath);
+        cy.url({ timeout: redirect }).should('not.include', l);
       },
       {
         validate() {
-          cy.visit(`${baseUrl}${dashboard}`, { failOnStatusCode: false });
-          cy.url({ timeout: redirect }).should('not.include', loginPath);
+          cy.visit(`${b}${dashboard}`, { failOnStatusCode: false });
+          cy.url({ timeout: redirect }).should('not.include', l);
         },
       },
     );
