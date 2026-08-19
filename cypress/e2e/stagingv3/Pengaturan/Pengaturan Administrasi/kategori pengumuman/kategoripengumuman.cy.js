@@ -1,34 +1,26 @@
-// Spec Kategori Pengumuman — KPU
+// Spec Kategori Pengumuman — KPG
 // POM: cypress/support/pageobjects/KategoriPengumumanPage.js
 // Fixture: cypress/fixtures/kategori_pengumuman.json
 //
 // =========================================================================
-// STATUS: BELUM TERVERIFIKASI — baca ini dulu.
+// STATUS: CONFIG TERVERIFIKASI 19 Agustus 2026 (DOM + Network asli).
 // =========================================================================
-// Config POM & fixture masih berisi nilai hipotesis bertanda (?) / TODO
-// (sumber: repo qa-cazh, app-nya sama, tapi belum kita buktikan sendiri).
+// ⚠️ TARGET = PRODUCTION (v3.cazh.id). Spec ini membuat & menghapus data nyata.
+//    Setelah run, sapu dengan cleanup: cypress/e2e/stagingv3/cleanup/cleanupkategoripengumuman.cy.js
 //
-// RUN PERTAMA = ALAT VERIFIKASI, bukan laporan cakupan.
-//   1) Lihat blok "S-00 — Kontrak config" duluan. Blok itu memverifikasi
-//      asumsi paling dasar: route benar, tabel ada, tombol Tambah ada,
-//      dan field yang dideklarasikan di config memang ada di form.
-//   2) Kalau S-00 merah, SEMUA blok di bawahnya tidak ada artinya —
-//      perbaiki config POM dulu, jangan menilai hasilnya.
-//   3) Setelah S-00 hijau, kegagalan di blok lain baru bermakna dan bisa
-//      langsung dipakai sebagai hasil element analysis.
-//
-// JANGAN dilaporkan sebagai cakupan resmi sebelum urutan CLAUDE.md dijalani:
-// PRD -> TC sheet (ACC) -> element analysis (ACC) -> naikkan nilai (?) -> spec final.
-//
-// Assertion pesan validasi sengaja memakai assertNotSilent(), BUKAN teks
-// tertentu: teks pesannya belum terverifikasi, jadi yang di-assert adalah
-// kewajiban minimum app — tidak boleh diam.
+// Modul PALING unik (lihat POM):
+//   - GLOBAL: TIDAK ada field/kolom Instansi.
+//   - Add != Edit: dialog Tambah 1 field (Nama); dialog Edit 2 field (Nama + Status).
+//   - Duplikat DITOLAK 400 (create POST & edit PUT) -> S-06 negative test.
+//   - Edit = PUT /{id}. saveEditExpectSuccess() assert 200.
+//   - Wording "harus diisi". Toast title spesifik + desc. Empty state "Belum Ada Kategori".
+//   - Status di kolom 1 -> pakai shared cy.assertRowStatus.
 
 import KategoriPengumuman from '../../../../../support/pageobjects/KategoriPengumumanPage';
 import LoginPage from '../../../../../support/pageobjects/LoginPage';
 import { makeUniq } from '../../../../../support/pageobjects/base/helpers';
 
-describe('Kategori Pengumuman — KPU', () => {
+describe('Kategori Pengumuman — KPG', () => {
   let d;
   let uniq;
 
@@ -45,25 +37,30 @@ describe('Kategori Pengumuman — KPU', () => {
   });
 
   // ==========================================================================
-  // S-00 — Kontrak config. Kalau blok ini merah, jangan lanjut menilai blok lain.
+  // S-00 — Kontrak config (termasuk Add != Edit)
   // ==========================================================================
   describe('S-00 — Kontrak config', () => {
-    it('TC-KPU-001 | Happy | Halaman list bisa dibuka & tabel tampil', () => {
+    it('TC-KPG-001 | Happy | Halaman list bisa dibuka & tabel tampil', () => {
       KategoriPengumuman.visit();
       cy.url().should('include', KategoriPengumuman.cfg.route);
       KategoriPengumuman.elements.table().should('be.visible');
     });
 
-    it('TC-KPU-002 | Happy | Tombol Tambah ada & membuka form', () => {
+    it('TC-KPG-002 | Happy | Dialog Tambah = 1 field (Nama), TANPA Instansi', () => {
       KategoriPengumuman.visit().openAddModal();
-      KategoriPengumuman.assertDialogOpen();
+      KategoriPengumuman.assertDialogOpen(d.labels.addButton);
+      KategoriPengumuman.elements.fieldItem('nama').should('exist');
+      // GLOBAL: tidak ada field Instansi & hanya 1 form-label di dialog Tambah.
+      KategoriPengumuman.elements.dialog().find('[data-slot="form-label"]').should('have.length', 1);
+      KategoriPengumuman.elements.dialog().find('[data-slot="form-label"]').should('not.contain.text', 'Instansi');
     });
 
-    it('TC-KPU-003 | Happy | Semua field di config benar-benar ada di form', () => {
-      KategoriPengumuman.visit().openAddModal();
-      Object.keys(KategoriPengumuman.cfg.fields).forEach((key) => {
-        KategoriPengumuman.elements.fieldItem(key).should('exist');
-      });
+    it('TC-KPG-003 | Happy | Dialog Edit = 2 field (Nama + Status)', () => {
+      const nama = uniq();
+      KategoriPengumuman.visit().tambah({ nama });
+      KategoriPengumuman.visit().search(nama).openEditByText(nama);
+      KategoriPengumuman.elements.fieldItem('nama').should('exist');
+      cy.contains('[data-slot="dialog-content"] [data-slot="form-label"]', 'Status').should('exist');
     });
   });
 
@@ -71,22 +68,30 @@ describe('Kategori Pengumuman — KPU', () => {
   // S-01 — Tambah
   // ==========================================================================
   describe('S-01 — Tambah', () => {
-    it('TC-KPU-010 | Happy | Tambah data valid -> muncul di list', () => {
+    it('TC-KPG-010 | Happy | Tambah valid -> toast (title+desc) & muncul di list', () => {
       const nama = uniq();
-      KategoriPengumuman.visit().openAddModal().fillForm({ nama }).saveExpectSuccess();
+      KategoriPengumuman.visit().tambah({ nama });
+      KategoriPengumuman.assertToast(d.messages.addSuccess, d.messages.addSuccessDesc);
       KategoriPengumuman.assertRowExists(nama);
     });
 
-    it('TC-KPU-011 | Happy | Data persist setelah reload halaman', () => {
+    it('TC-KPG-011 | Happy | Data persist setelah reload halaman', () => {
       const nama = uniq();
-      KategoriPengumuman.visit().openAddModal().fillForm({ nama }).saveExpectSuccess();
+      KategoriPengumuman.visit().tambah({ nama });
       KategoriPengumuman.assertPersisted(nama);
     });
 
-    it('TC-KPU-012 | Positif | Batal menutup form tanpa menyimpan', () => {
+    it('TC-KPG-012 | Positif | Tutup dialog tanpa menyimpan -> data tidak dibuat', () => {
       const nama = uniq();
-      KategoriPengumuman.visit().openAddModal().fillForm({ nama }).cancel();
+      KategoriPengumuman.visit().openAddModal().fillForm({ nama }).closeByX();
       KategoriPengumuman.assertDialogClosed().assertRowNotExists(nama);
+    });
+
+    it('TC-KPG-013 | Happy | Data baru default berstatus Aktif', () => {
+      const nama = uniq();
+      KategoriPengumuman.visit().tambah({ nama });
+      KategoriPengumuman.visit().search(nama);
+      cy.assertRowStatus(0, d.columns.status, d.labels.statusActive);
     });
   });
 
@@ -94,12 +99,12 @@ describe('Kategori Pengumuman — KPU', () => {
   // S-02 — Validasi
   // ==========================================================================
   describe('S-02 — Validasi', () => {
-    it('TC-KPU-020 | Negatif | Simpan form kosong -> FE tidak boleh diam', () => {
+    it('TC-KPG-020 | Negatif | Simpan nama kosong -> pesan "harus diisi"', () => {
       KategoriPengumuman.visit().openAddModal().save();
-      KategoriPengumuman.assertNotSilent();
+      KategoriPengumuman.assertFieldError('nama', d.messages.namaRequired);
     });
 
-    it('TC-KPU-021 | Negatif | Simpan form kosong -> dialog tetap terbuka', () => {
+    it('TC-KPG-021 | Negatif | Simpan nama kosong -> dialog tetap terbuka', () => {
       KategoriPengumuman.visit().openAddModal().save();
       KategoriPengumuman.assertDialogOpen();
     });
@@ -109,42 +114,57 @@ describe('Kategori Pengumuman — KPU', () => {
   // S-03 — List
   // ==========================================================================
   describe('S-03 — List', () => {
-    it('TC-KPU-030 | Happy | Data terbaru muncul di baris teratas', () => {
+    it('TC-KPG-030 | Happy | Data terbaru muncul di baris teratas', () => {
       const nama = uniq();
-      KategoriPengumuman.visit().openAddModal().fillForm({ nama }).saveExpectSuccess();
+      KategoriPengumuman.visit().tambah({ nama });
       KategoriPengumuman.visit().assertFirstRowCell('nama', nama);
     });
 
-    it('TC-KPU-031 | Positif | Search menemukan data yang baru dibuat', () => {
+    it('TC-KPG-031 | Positif | Search menemukan data yang baru dibuat', () => {
       const nama = uniq();
-      KategoriPengumuman.visit().openAddModal().fillForm({ nama }).saveExpectSuccess();
+      KategoriPengumuman.visit().tambah({ nama });
       KategoriPengumuman.visit().search(nama).assertRowExists(nama);
     });
 
-    it('TC-KPU-032 | Negatif | Search tanpa hasil -> empty state', () => {
-      KategoriPengumuman.visit().search('ZZZQA000TIDAKADA');
-      KategoriPengumuman.assertEmptyState();
+    // Empty-state wording pada search/filter-nihil belum diverifikasi (beda dari
+    // "Belum Ada Kategori" yang state no-data). Jadi assert bahwa filter benar2
+    // menyaring: data yang dibuat TIDAK muncul saat search istilah lain.
+    it('TC-KPG-032 | Negatif | Search istilah lain -> data QA tidak muncul (filter bekerja)', () => {
+      const nama = uniq();
+      KategoriPengumuman.visit().tambah({ nama });
+      KategoriPengumuman.visit().search('ZZZQA000TIDAKADA').assertRowNotExists(nama);
     });
   });
 
   // ==========================================================================
-  // S-04 — Edit
+  // S-04 — Edit (PUT)
   // ==========================================================================
   describe('S-04 — Edit', () => {
-    it('TC-KPU-040 | Happy | Form edit ter-prefill sesuai baris', () => {
+    it('TC-KPG-040 | Happy | Form edit ter-prefill sesuai baris', () => {
       const nama = uniq();
-      KategoriPengumuman.visit().openAddModal().fillForm({ nama }).saveExpectSuccess();
+      KategoriPengumuman.visit().tambah({ nama });
       KategoriPengumuman.visit().search(nama).openEditByText(nama);
-      KategoriPengumuman.assertFormPrefilled({ nama: nama });
+      KategoriPengumuman.assertFormPrefilled({ nama });
     });
 
-    it('TC-KPU-041 | Happy | Perubahan tersimpan & persist', () => {
+    it('TC-KPG-041 | Happy | Perubahan nama tersimpan & persist (PUT 200)', () => {
       const nama = uniq();
       const namaBaru = uniq();
-      KategoriPengumuman.visit().openAddModal().fillForm({ nama }).saveExpectSuccess();
+      KategoriPengumuman.visit().tambah({ nama });
       KategoriPengumuman.visit().search(nama).openEditByText(nama)
-        .fill('nama', namaBaru).saveExpectSuccess();
+        .fill('nama', namaBaru)
+        .saveEditExpectSuccess();
       KategoriPengumuman.assertPersisted(namaBaru);
+    });
+
+    it('TC-KPG-042 | Happy | Ubah Status ke "Tidak Aktif" -> badge baris ikut berubah', () => {
+      const nama = uniq();
+      KategoriPengumuman.visit().tambah({ nama });
+      KategoriPengumuman.visit().search(nama).openEditByText(nama)
+        .editStatus(d.testData.editStatus)
+        .saveEditExpectSuccess();
+      KategoriPengumuman.visit().search(nama);
+      cy.assertRowStatus(0, d.columns.status, d.testData.editStatus);
     });
   });
 
@@ -152,18 +172,43 @@ describe('Kategori Pengumuman — KPU', () => {
   // S-05 — Hapus
   // ==========================================================================
   describe('S-05 — Hapus', () => {
-    it('TC-KPU-050 | Positif | Dialog konfirmasi muncul sebelum menghapus', () => {
+    it('TC-KPG-050 | Positif | Dialog konfirmasi muncul sebelum menghapus', () => {
       const nama = uniq();
-      KategoriPengumuman.visit().openAddModal().fillForm({ nama }).saveExpectSuccess();
+      KategoriPengumuman.visit().tambah({ nama });
       KategoriPengumuman.visit().search(nama).openDeleteByText(nama);
       KategoriPengumuman.assertDialogOpen();
     });
 
-    it('TC-KPU-051 | Happy | Hapus data -> hilang dari list & tidak persist', () => {
+    it('TC-KPG-051 | Happy | Hapus data -> toast sukses, hilang & tidak persist', () => {
       const nama = uniq();
-      KategoriPengumuman.visit().openAddModal().fillForm({ nama }).saveExpectSuccess();
+      KategoriPengumuman.visit().tambah({ nama });
       KategoriPengumuman.visit().search(nama).deleteByText(nama);
+      KategoriPengumuman.assertToast(d.messages.deleteSuccess, d.messages.deleteSuccessDesc);
       KategoriPengumuman.assertNotPersisted(nama);
+    });
+  });
+
+  // ==========================================================================
+  // S-06 — Duplikat DITOLAK (create POST 400 & edit PUT 400)
+  // ==========================================================================
+  describe('S-06 — Duplikat ditolak', () => {
+    it('TC-KPG-060 | Negatif | Tambah nama duplikat ditolak (POST 400) + pesan', () => {
+      const nama = uniq();
+      KategoriPengumuman.visit().tambah({ nama });
+      KategoriPengumuman.visit().openAddModal()
+        .fillForm({ nama })
+        .saveExpectDuplicate(d.messages.duplicate);
+    });
+
+    it('TC-KPG-061 | Negatif | Edit nama jadi duplikat ditolak (PUT 400) + pesan', () => {
+      const namaA = uniq();
+      const namaB = uniq();
+      KategoriPengumuman.visit().tambah({ nama: namaA });
+      KategoriPengumuman.visit().tambah({ nama: namaB });
+      // Edit B -> ubah nama jadi namaA (sudah ada) -> ditolak PUT 400.
+      KategoriPengumuman.visit().search(namaB).openEditByText(namaB)
+        .fill('nama', namaA)
+        .saveEditExpectDuplicate(d.messages.duplicate);
     });
   });
 });

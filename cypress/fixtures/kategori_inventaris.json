@@ -1,51 +1,58 @@
 {
-  "_status": "KERANGKA — nilai bertanda TODO/(?) belum diverifikasi ke UI asli. Jangan dipakai di spec sebelum lewat checkpoint element analysis.",
-  "_sumber": "Struktur dibangun sendiri (konvensi repo ini). Kandidat nilai berasal dari repo qa-cazh — app yang sama, tapi BELUM kita buktikan. Lihat docs/REFERENSI_ELEMEN.md.",
+  "_status": "TERVERIFIKASI 19 Agustus 2026 — nilai dari DOM + Network asli. 100% lengkap. 1 temuan (duplikat diizinkan — 3 dari 4 master data, kemungkinan by-design).",
+  "_sumber": "Element analysis manual pada https://v3.cazh.id.",
   "urls": {
     "base": "https://v3.cazh.id",
     "login": "/auth/login",
     "list": "/setting/inventory"
   },
   "api": {
-    "_todo": "isi dari tab Network (XHR) saat element analysis",
-    "list": null,
-    "save": null
+    "list": "**/api/proxy/inventory-categories*",
+    "save": "**/api/proxy/inventory-categories"
   },
   "credentials": {
     "email": "androidtesting117@gmail.com",
     "password": "f7ki6b2u"
   },
   "instansi": {
-    "primary": "Sekolah Digital Indonesia",
-    "secondary": "Academy QA Engineer"
+    "primary": "Academy QA Engineer",
+    "secondary": "Academy Cazh",
+    "options": {
+      "Academy Cazh": "6a66106c95849c0019d19faa",
+      "Academy QA Engineer": "6a647cd1c1a15d00193aa39a",
+      "Sekolah Digital Indonesia": "6a4ca54faab9f40019199d3e",
+      "Yayasan New School": "6a4c61fecace47001a67a887"
+    }
   },
   "labels": {
-    "addButton": "Tambah Kategori",
-    "namaLabel": "Nama Kategori",
-    "namaPlaceholder": "TODO — qa-cazh: 'Contoh: Meja atau Kursi' (unverified)",
-    "statusActive": "Aktif",
-    "statusInactive": "Tidak Aktif"
+    "addButton": "Tambah Kategori Inventaris",
+    "save": "Simpan"
   },
   "messages": {
-    "addSuccess": "TODO",
-    "editSuccess": "TODO",
-    "deleteSuccess": "TODO",
-    "instansiRequired": "TODO — qa-cazh: 'Instansi wajib diisi' (unverified)",
-    "namaRequired": "TODO — qa-cazh: 'Nama kategori inventaris wajib diisi' (unverified)",
-    "emptyState": "TODO — qa-cazh tidak konsisten: POM 'Data inventaris tidak ditemukan' vs fixture 'Tidak ada data yang ditemukan'"
+    "toastTitle": "Berhasil",
+    "addSuccess": "Kategori inventaris berhasil ditambahkan",
+    "editSuccess": "Kategori inventaris berhasil diperbarui",
+    "deleteSuccess": "Kategori inventaris berhasil dihapus",
+    "instansiRequired": "Instansi wajib diisi",
+    "namaRequired": "Nama kategori inventaris wajib diisi",
+    "emptyState": "Data inventaris tidak ditemukan"
   },
   "columns": {
     "instansi": 0,
-    "nama": 1
-  },
-  "fields": {
-    "nama": {
-      "maxLength": null,
-      "_todo": "batas panjang nama — cek PRD"
-    }
+    "nama": 1,
+    "dibuatPada": 2
   },
   "testData": {
-    "prefix": "QA"
+    "prefix": "QA",
+    "instansi": "Academy QA Engineer",
+    "nama": "QA Auto Kategori"
+  },
+  "notes": {
+    "toast": "SEMUA toast sukses: title KONSTAN 'Berhasil', pesan sebenarnya di [data-description]. Assertion harus target description, bukan title.",
+    "duplikat": "DIIZINKAN — save POST balik 200 (bukan 409). Peta: Jenis Tagihan (invoice) TOLAK 409, Jenis Guru+Staff (staffing) izinkan, Kategori Inventaris (inventory) izinkan → 3 dari 4 izinkan, kemungkinan by-design. Konfirmasi PRD; S-06 dokumentasi behavior aktual, bukan expect-error.",
+    "endpoint": "URL halaman '/setting/inventory' TAPI endpoint '/api/proxy/inventory-categories' (hyphen, tidak nurut URL). POST 200 (bukan 201).",
+    "tabel": "TANPA kolom Status (beda dari Jenis Guru/Staff). Kolom: Instansi/Nama Kategori/Dibuat pada + 2 aksi.",
+    "naming": "Inkonsisten app: heading 'Inventaris', empty state 'Data inventaris tidak ditemukan', tombol empty-state 'Tambah Inventaris' — tapi tombol utama & judul dialog 'Tambah Kategori Inventaris'."
   },
   "timeouts": {
     "dialog": 15000,

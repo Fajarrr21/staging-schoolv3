@@ -1,63 +1,73 @@
 {
-  "_status": "KERANGKA — nilai bertanda TODO/(?) belum diverifikasi ke UI asli. Jangan dipakai di spec sebelum lewat checkpoint element analysis.",
-  "_sumber": "Struktur dibangun sendiri (konvensi repo ini). Kandidat nilai berasal dari repo qa-cazh — app yang sama, tapi BELUM kita buktikan. Lihat docs/REFERENSI_ELEMEN.md.",
+  "_status": "TERVERIFIKASI 19 Agustus 2026 — 100% (11/11 pesan). route/field/kolom/endpoint + 4 required + duplikat + overlap + 3 sukses + 3 range poin inline dibuktikan ke app. name field poin BELUM verified → POM scope poin by LABEL, bukan name.",
+  "_sumber": "Element analysis manual pada https://v3.cazh.id.",
   "urls": {
     "base": "https://v3.cazh.id",
     "login": "/auth/login",
     "list": "/setting/student-affairs/violation-type"
   },
   "api": {
-    "_todo": "isi dari tab Network (XHR) saat element analysis",
-    "list": null,
-    "save": null
+    "list": "**/api/proxy/violation-types*",
+    "save": "**/api/proxy/violation-types"
   },
   "credentials": {
     "email": "androidtesting117@gmail.com",
     "password": "f7ki6b2u"
   },
   "instansi": {
-    "primary": "Sekolah Digital Indonesia",
-    "secondary": "Academy QA Engineer"
+    "primary": "Academy QA Engineer",
+    "secondary": "Academy Cazh",
+    "options": {
+      "Academy Cazh": "6a66106c95849c0019d19faa",
+      "Academy QA Engineer": "6a647cd1c1a15d00193aa39a",
+      "Sekolah Digital Indonesia": "6a4ca54faab9f40019199d3e",
+      "Yayasan New School": "6a4c61fecace47001a67a887"
+    }
   },
   "labels": {
-    "addButton": "Tambah Tipe Pelanggaran",
-    "statusActive": "Aktif",
-    "statusInactive": "Tidak Aktif"
+    "addButton": "Tambah Tipe",
+    "save": "Simpan"
   },
   "messages": {
-    "addSuccess": "TODO",
-    "editSuccess": "TODO",
-    "deleteSuccess": "TODO",
-    "instansiRequired": "TODO",
-    "namaRequired": "TODO",
-    "minPoinRequired": "TODO",
-    "maxPoinRequired": "TODO",
-    "minGreaterMax": "TODO — qa-cazh cuma menyimpan potongan 'harus lebih kecil' (unverified)",
-    "maxExceeds": "TODO — qa-cazh: 'tidak boleh lebih dari 999' (unverified)",
-    "overlap": "TODO — qa-cazh cuma menyimpan potongan 'bertumpuk' (unverified)",
-    "emptyState": "Data Tipe Pelanggaran tidak ditemukan"
+    "toastTitle": "Berhasil!",
+    "addSuccess": "Tipe pelanggaran berhasil ditambahkan",
+    "editSuccess": "Tipe pelanggaran berhasil diperbarui",
+    "deleteSuccess": "Tipe pelanggaran berhasil dihapus",
+    "instansiRequired": "Instansi wajib diisi",
+    "namaRequired": "Tipe pelanggaran wajib diisi",
+    "poinMinRequired": "Poin minimum wajib diisi",
+    "poinMaxRequired": "Poin maksimum wajib diisi",
+    "duplicate": "Nama tipe pelanggaran sudah ada, silakan gunakan nama lain",
+    "poinKurangMin": "Poin minimum tidak boleh kurang",
+    "poinKurangMax": "Poin maksimum tidak boleh kurang",
+    "poinMinMax": "Nilai minimal harus lebih kecil dari nilai maksimal",
+    "poinLebihMax": "Poin maksimum tidak boleh lebih dari 999",
+    "poinOverlap": "Range poin bertumpuk dengan tipe pelanggaran lain, silakan ubah nilai"
+  },
+  "_validasiCatatan": {
+    "inline": "Rule required (1-4), poinKurangMin/Max (6a/7), poinMinMax (8), poinLebihMax (6b) = validasi INLINE (data-slot=form-message.text-destructive) — muncul tanpa POST. Test: isi invalid + save() (submit ke-block) lalu assert pesan.",
+    "serverSide": "duplicate (5) & poinOverlap (9) = SERVER-SIDE — klik Simpan → POST 400 → toast error [data-description]. Test: saveExpectServerError(pesan)."
   },
   "columns": {
     "instansi": 0,
     "nama": 1,
-    "minPoin": 2,
-    "maxPoin": 3,
-    "status": 4
-  },
-  "fields": {
-    "nama": {
-      "maxLength": 100,
-      "_sumber": "qa-cazh (unverified) — konfirmasi ke PRD"
-    },
-    "poin": {
-      "min": 0,
-      "max": 999,
-      "_aturan": "min < max; range antar tipe tidak boleh overlap",
-      "_sumber": "qa-cazh (unverified) — konfirmasi ke PRD"
-    }
+    "rangePoin": 2
   },
   "testData": {
-    "prefix": "QA"
+    "prefix": "QA",
+    "instansi": "Academy QA Engineer",
+    "nama": "QA Auto Pelanggaran",
+    "poinMin": 51,
+    "poinMax": 66
+  },
+  "notes": {
+    "duplikat": "DITOLAK — save POST balik 400 (bukan 409 seperti Jenis Tagihan). Pesan duplicate. Peta duplikat: modul dgn constraint semantik (billing/range poin) enforce unik; modul list-nama sederhana (staffing/inventory) izinkan. Kemungkinan by-design.",
+    "validasiSplit": "Modul paling kaya negative test: 8 inline (required + range) + 2 server-side (duplikat + overlap). poinKurangMax (max<1) trigger ambigu utk diisolasi dari poinMinMax → di-skip; 3 range lain (poinKurangMin/poinLebihMax/poinMinMax) + overlap aktif.",
+    "endpoint": "URL '/setting/student-affairs/violation-type' TAPI endpoint '/api/proxy/violation-types' (hyphen, flat, tidak nurut URL). POST 201 sukses / 400 gagal.",
+    "toast": "title KONSTAN 'Berhasil!' (pakai '!'), pesan sukses di [data-description]. Error di toast type=error [data-description].",
+    "fieldName": "poinMin/poinMax: atribut name (min_point/max_point) BELUM verified → POM scope by label (formItem(label).find('input')). nama name='name' verified.",
+    "dialog": "Dialog SCROLLABLE (blok Catatan panjang + 4 field). Cypress auto-scroll saat action; POM tetap scrollIntoView() field poin utk aman.",
+    "kolomStatus": "Ada filter Status di toolbar tapi kolom Status di tabel belum dipastikan — TIDAK dipetakan (cukup instansi/nama/rangePoin)."
   },
   "timeouts": {
     "dialog": 15000,

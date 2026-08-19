@@ -1,56 +1,57 @@
 {
-  "_status": "KERANGKA — nilai bertanda TODO/(?) belum diverifikasi ke UI asli. Jangan dipakai di spec sebelum lewat checkpoint element analysis.",
-  "_sumber": "Struktur dibangun sendiri (konvensi repo ini). Kandidat nilai berasal dari repo qa-cazh — app yang sama, tapi BELUM kita buktikan. Lihat docs/REFERENSI_ELEMEN.md.",
+  "_status": "TERVERIFIKASI 19 Agustus 2026 — nilai dari DOM + Network asli. 100% lengkap. Modul GLOBAL (tanpa instansi), Add(1 field) != Edit(2 field +Status), duplikat DITOLAK 400, Edit=PUT /{id}.",
+  "_sumber": "Element analysis manual pada https://v3.cazh.id.",
   "urls": {
     "base": "https://v3.cazh.id",
     "login": "/auth/login",
-    "list": "/setting/administration/announcement-category",
-    "create": "/setting/administration/announcement-category/create"
+    "list": "/setting/administration/announcement-category"
   },
   "api": {
-    "_todo": "isi dari tab Network (XHR) saat element analysis",
-    "list": null,
-    "save": null
+    "list": "**/api/proxy/announcement-categories*",
+    "save": "**/api/proxy/announcement-categories",
+    "update": "**/api/proxy/announcement-categories/*",
+    "delete": "**/api/proxy/announcement-categories/*"
   },
   "credentials": {
     "email": "androidtesting117@gmail.com",
     "password": "f7ki6b2u"
   },
-  "instansi": {
-    "primary": "Sekolah Digital Indonesia",
-    "secondary": "Academy QA Engineer"
-  },
   "labels": {
     "addButton": "Tambah Kategori",
-    "namaLabel": "Nama Kategori",
+    "save": "Simpan",
     "statusActive": "Aktif",
-    "statusInactive": "Nonaktif"
+    "statusInactive": "Tidak Aktif"
   },
   "messages": {
-    "addSuccess": "TODO — qa-cazh: 'Kategori berhasil ditambahkan' (unverified)",
-    "editSuccess": "TODO — qa-cazh: 'Kategori berhasil diperbarui' (unverified)",
-    "deleteSuccess": "TODO — qa-cazh: 'Kategori berhasil dihapus' (unverified)",
-    "namaRequired": "TODO — qa-cazh: 'Nama kategori harus diisi.' (unverified)",
-    "namaMinLength": "TODO — qa-cazh: 'Nama kategori minimal 2 karakter.' (unverified)",
-    "namaMaxLength": "TODO — qa-cazh: 'Nama kategori maksimal 100 karakter.' (unverified)",
-    "namaDuplicate": "TODO — qa-cazh: 'Nama kategori sudah digunakan.' (unverified)",
-    "deleteInUse": "TODO — qa-cazh: 'Kategori tidak dapat dihapus karena masih digunakan oleh pengumuman lain.' (unverified)",
-    "emptyState": "TODO — qa-cazh: 'Kategori tidak ditemukan.' (unverified)"
+    "namaRequired": "Nama kategori harus diisi.",
+    "duplicate": "Nama kategori sudah digunakan.",
+    "toastTitleAdd": "Kategori berhasil ditambahkan",
+    "addSuccess": "Kategori berhasil ditambahkan",
+    "addSuccessDesc": "Kategori pengumuman baru telah ditambahkan ke sistem",
+    "editSuccess": "Kategori berhasil diperbarui",
+    "editSuccessDesc": "Kategori pengumuman telah diperbarui",
+    "deleteSuccess": "Kategori berhasil dihapus",
+    "deleteSuccessDesc": "Kategori pengumuman telah dihapus dari sistem",
+    "emptyState": "Belum Ada Kategori",
+    "emptyStateDesc": "Anda dapat membuat kategori baru dengan mengklik tombol Tambah Kategori"
   },
   "columns": {
     "nama": 0,
-    "status": 1
-  },
-  "fields": {
-    "nama": {
-      "minLength": 2,
-      "maxLength": 100,
-      "allowedChars": "huruf, angka, spasi, dan - _ & .",
-      "_sumber": "qa-cazh (unverified) — konfirmasi ke PRD"
-    }
+    "status": 1,
+    "dibuatPada": 2
   },
   "testData": {
-    "prefix": "QA"
+    "prefix": "QA",
+    "nama": "QA Auto Kategori Pengumuman",
+    "editStatus": "Tidak Aktif"
+  },
+  "notes": {
+    "global": "GLOBAL — TIDAK ada field/kolom Instansi. Pertama di repo. options.instansi modul lain tidak berlaku.",
+    "addEditAsimetris": "Dialog TAMBAH = 1 field (Nama Kategori). Dialog EDIT = 2 field (Nama Kategori + Status select Aktif/Tidak Aktif). Status hanya bisa di-set saat EDIT; create default Aktif.",
+    "duplikat": "DITOLAK 400 (create POST & edit PUT). Pesan duplicate. TEORI 'list nama simpel = boleh dobel' PATAH: Kategori Inventaris (list simpel) izinkan, Kategori Pengumuman (list simpel) tolak → validasi duplikat INKONSISTEN antar modul, kemungkinan bug/kelalaian. Selalu cek duplikat per modul.",
+    "edit": "Edit = PUT /api/proxy/announcement-categories/{id} → 200 (400 kalau duplikat). Method+path edit pertama kali ke-capture eksplisit.",
+    "wording": "Validasi 'harus diisi' (bukan 'wajib diisi' kayak modul lain). Toast title spesifik (bukan konstan 'Berhasil').",
+    "emptyState": "Heading 'Belum Ada Kategori' (h3), BUKAN 'Data ... tidak ditemukan'. Ini state 'belum ada data sama sekali'; state search/filter-nihil mungkin beda wording (belum dicek) → spec TIDAK assert empty state pada search."
   },
   "timeouts": {
     "dialog": 15000,

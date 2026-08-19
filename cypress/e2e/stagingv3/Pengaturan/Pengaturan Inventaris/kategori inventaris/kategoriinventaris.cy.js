@@ -3,26 +3,20 @@
 // Fixture: cypress/fixtures/kategori_inventaris.json
 //
 // =========================================================================
-// STATUS: BELUM TERVERIFIKASI — baca ini dulu.
+// STATUS: CONFIG TERVERIFIKASI 19 Agustus 2026 (DOM + Network asli).
 // =========================================================================
-// Config POM & fixture masih berisi nilai hipotesis bertanda (?) / TODO
-// (sumber: repo qa-cazh, app-nya sama, tapi belum kita buktikan sendiri).
+// Route, field, kolom, endpoint, dan SEMUA pesan sudah dibuktikan ke app.
 //
-// RUN PERTAMA = ALAT VERIFIKASI, bukan laporan cakupan.
-//   1) Lihat blok "S-00 — Kontrak config" duluan. Blok itu memverifikasi
-//      asumsi paling dasar: route benar, tabel ada, tombol Tambah ada,
-//      dan field yang dideklarasikan di config memang ada di form.
-//   2) Kalau S-00 merah, SEMUA blok di bawahnya tidak ada artinya —
-//      perbaiki config POM dulu, jangan menilai hasilnya.
-//   3) Setelah S-00 hijau, kegagalan di blok lain baru bermakna dan bisa
-//      langsung dipakai sebagai hasil element analysis.
+// ⚠️ TARGET = PRODUCTION (v3.cazh.id). Spec ini membuat & menghapus data nyata.
+//    Setelah run, sapu dengan cleanup: cypress/e2e/stagingv3/cleanup/cleanupkategoriinventaris.cy.js
 //
-// JANGAN dilaporkan sebagai cakupan resmi sebelum urutan CLAUDE.md dijalani:
-// PRD -> TC sheet (ACC) -> element analysis (ACC) -> naikkan nilai (?) -> spec final.
-//
-// Assertion pesan validasi sengaja memakai assertNotSilent(), BUKAN teks
-// tertentu: teks pesannya belum terverifikasi, jadi yang di-assert adalah
-// kewajiban minimum app — tidak boleh diam.
+// Khas modul ini (lihat POM):
+//   - Endpoint /api/proxy/inventory-categories (hyphen, tidak nurut URL). POST 200.
+//   - Tabel TANPA kolom Status.
+//   - Toast: title KONSTAN "Berhasil", pesan di description → assertToast(toastTitle, pesan).
+//   - Empty state <h3>"Data inventaris tidak ditemukan"</h3> (naming app "inventaris").
+//   - DUPLIKAT DIIZINKAN (tidak 409) — S-06 dokumentasi behavior AKTUAL, bukan expect
+//     error. 3 dari 4 master data izinkan → kemungkinan by-design, konfirmasi PRD.
 
 import KategoriInventaris from '../../../../../support/pageobjects/KategoriInventarisPage';
 import LoginPage from '../../../../../support/pageobjects/LoginPage';
@@ -45,7 +39,7 @@ describe('Kategori Inventaris — KIN', () => {
   });
 
   // ==========================================================================
-  // S-00 — Kontrak config. Kalau blok ini merah, jangan lanjut menilai blok lain.
+  // S-00 — Kontrak config
   // ==========================================================================
   describe('S-00 — Kontrak config', () => {
     it('TC-KIN-001 | Happy | Halaman list bisa dibuka & tabel tampil', () => {
@@ -54,12 +48,12 @@ describe('Kategori Inventaris — KIN', () => {
       KategoriInventaris.elements.table().should('be.visible');
     });
 
-    it('TC-KIN-002 | Happy | Tombol Tambah ada & membuka form', () => {
+    it('TC-KIN-002 | Happy | Tombol Tambah membuka dialog dengan judul benar', () => {
       KategoriInventaris.visit().openAddModal();
-      KategoriInventaris.assertDialogOpen();
+      KategoriInventaris.assertDialogOpen(d.labels.addButton);
     });
 
-    it('TC-KIN-003 | Happy | Semua field di config benar-benar ada di form', () => {
+    it('TC-KIN-003 | Happy | Semua field (2) ada di form', () => {
       KategoriInventaris.visit().openAddModal();
       Object.keys(KategoriInventaris.cfg.fields).forEach((key) => {
         KategoriInventaris.elements.fieldItem(key).should('exist');
@@ -71,21 +65,22 @@ describe('Kategori Inventaris — KIN', () => {
   // S-01 — Tambah
   // ==========================================================================
   describe('S-01 — Tambah', () => {
-    it('TC-KIN-010 | Happy | Tambah data valid -> muncul di list', () => {
+    it('TC-KIN-010 | Happy | Tambah valid -> toast "Berhasil" (desc) & muncul di list', () => {
       const nama = uniq();
-      KategoriInventaris.visit().openAddModal().fillForm({ instansi: d.instansi.primary, nama }).saveExpectSuccess();
+      KategoriInventaris.visit().tambah({ instansi: d.testData.instansi, nama });
+      KategoriInventaris.assertToast(d.messages.toastTitle, d.messages.addSuccess);
       KategoriInventaris.assertRowExists(nama);
     });
 
     it('TC-KIN-011 | Happy | Data persist setelah reload halaman', () => {
       const nama = uniq();
-      KategoriInventaris.visit().openAddModal().fillForm({ instansi: d.instansi.primary, nama }).saveExpectSuccess();
+      KategoriInventaris.visit().tambah({ instansi: d.testData.instansi, nama });
       KategoriInventaris.assertPersisted(nama);
     });
 
-    it('TC-KIN-012 | Positif | Batal menutup form tanpa menyimpan', () => {
+    it('TC-KIN-012 | Positif | Tutup dialog tanpa menyimpan -> data tidak dibuat', () => {
       const nama = uniq();
-      KategoriInventaris.visit().openAddModal().fillForm({ instansi: d.instansi.primary, nama }).cancel();
+      KategoriInventaris.visit().openAddModal().fillForm({ instansi: d.testData.instansi, nama }).closeByX();
       KategoriInventaris.assertDialogClosed().assertRowNotExists(nama);
     });
   });
@@ -94,9 +89,10 @@ describe('Kategori Inventaris — KIN', () => {
   // S-02 — Validasi
   // ==========================================================================
   describe('S-02 — Validasi', () => {
-    it('TC-KIN-020 | Negatif | Simpan form kosong -> FE tidak boleh diam', () => {
+    it('TC-KIN-020 | Negatif | Simpan form kosong -> 2 pesan wajib tampil', () => {
       KategoriInventaris.visit().openAddModal().save();
-      KategoriInventaris.assertNotSilent();
+      KategoriInventaris.assertFieldError('instansi', d.messages.instansiRequired);
+      KategoriInventaris.assertFieldError('nama', d.messages.namaRequired);
     });
 
     it('TC-KIN-021 | Negatif | Simpan form kosong -> dialog tetap terbuka', () => {
@@ -111,13 +107,13 @@ describe('Kategori Inventaris — KIN', () => {
   describe('S-03 — List', () => {
     it('TC-KIN-030 | Happy | Data terbaru muncul di baris teratas', () => {
       const nama = uniq();
-      KategoriInventaris.visit().openAddModal().fillForm({ instansi: d.instansi.primary, nama }).saveExpectSuccess();
+      KategoriInventaris.visit().tambah({ instansi: d.testData.instansi, nama });
       KategoriInventaris.visit().assertFirstRowCell('nama', nama);
     });
 
     it('TC-KIN-031 | Positif | Search menemukan data yang baru dibuat', () => {
       const nama = uniq();
-      KategoriInventaris.visit().openAddModal().fillForm({ instansi: d.instansi.primary, nama }).saveExpectSuccess();
+      KategoriInventaris.visit().tambah({ instansi: d.testData.instansi, nama });
       KategoriInventaris.visit().search(nama).assertRowExists(nama);
     });
 
@@ -133,17 +129,18 @@ describe('Kategori Inventaris — KIN', () => {
   describe('S-04 — Edit', () => {
     it('TC-KIN-040 | Happy | Form edit ter-prefill sesuai baris', () => {
       const nama = uniq();
-      KategoriInventaris.visit().openAddModal().fillForm({ instansi: d.instansi.primary, nama }).saveExpectSuccess();
+      KategoriInventaris.visit().tambah({ instansi: d.testData.instansi, nama });
       KategoriInventaris.visit().search(nama).openEditByText(nama);
-      KategoriInventaris.assertFormPrefilled({ nama: nama });
+      KategoriInventaris.assertFormPrefilled({ nama });
     });
 
-    it('TC-KIN-041 | Happy | Perubahan tersimpan & persist', () => {
+    it('TC-KIN-041 | Happy | Perubahan nama tersimpan & persist', () => {
       const nama = uniq();
       const namaBaru = uniq();
-      KategoriInventaris.visit().openAddModal().fillForm({ instansi: d.instansi.primary, nama }).saveExpectSuccess();
+      KategoriInventaris.visit().tambah({ instansi: d.testData.instansi, nama });
       KategoriInventaris.visit().search(nama).openEditByText(nama)
-        .fill('nama', namaBaru).saveExpectSuccess();
+        .fill('nama', namaBaru)
+        .saveEditExpectSuccess();
       KategoriInventaris.assertPersisted(namaBaru);
     });
   });
@@ -154,16 +151,37 @@ describe('Kategori Inventaris — KIN', () => {
   describe('S-05 — Hapus', () => {
     it('TC-KIN-050 | Positif | Dialog konfirmasi muncul sebelum menghapus', () => {
       const nama = uniq();
-      KategoriInventaris.visit().openAddModal().fillForm({ instansi: d.instansi.primary, nama }).saveExpectSuccess();
+      KategoriInventaris.visit().tambah({ instansi: d.testData.instansi, nama });
       KategoriInventaris.visit().search(nama).openDeleteByText(nama);
       KategoriInventaris.assertDialogOpen();
     });
 
-    it('TC-KIN-051 | Happy | Hapus data -> hilang dari list & tidak persist', () => {
+    it('TC-KIN-051 | Happy | Hapus data -> toast sukses, hilang & tidak persist', () => {
       const nama = uniq();
-      KategoriInventaris.visit().openAddModal().fillForm({ instansi: d.instansi.primary, nama }).saveExpectSuccess();
+      KategoriInventaris.visit().tambah({ instansi: d.testData.instansi, nama });
       KategoriInventaris.visit().search(nama).deleteByText(nama);
+      KategoriInventaris.assertToast(d.messages.toastTitle, d.messages.deleteSuccess);
       KategoriInventaris.assertNotPersisted(nama);
+    });
+  });
+
+  // ==========================================================================
+  // S-06 — Duplikat (TEMUAN, mendokumentasikan behavior AKTUAL)
+  // ==========================================================================
+  describe('S-06 — Duplikat (temuan: diizinkan)', () => {
+    // Kategori Inventaris MENGIZINKAN nama+instansi duplikat (POST 200, tidak 409).
+    // 3 dari 4 master data izinkan → kemungkinan by-design. TC ini membuktikan
+    // behavior aktual, BUKAN mengunci sebagai "benar". Kalau PRD memutuskan harus
+    // unique -> ubah jadi expect-penolakan + log BUG.
+    it('TC-KIN-060 | Temuan | Duplikat nama+instansi DIIZINKAN (ter-create 2x)', () => {
+      const nama = uniq();
+      KategoriInventaris.visit().tambah({ instansi: d.testData.instansi, nama });
+      // Buat lagi dengan kombinasi identik — masih sukses (bukan ditolak).
+      KategoriInventaris.visit().tambah({ instansi: d.testData.instansi, nama });
+      KategoriInventaris.assertToast(d.messages.toastTitle, d.messages.addSuccess);
+      // Terbukti ada >= 2 baris dengan nama sama.
+      KategoriInventaris.visit().search(nama);
+      cy.get('table tbody tr').should('have.length.gte', 2);
     });
   });
 });

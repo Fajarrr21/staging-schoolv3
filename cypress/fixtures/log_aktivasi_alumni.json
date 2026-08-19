@@ -1,39 +1,33 @@
 {
-  "_status": "KERANGKA — nilai TODO/(?) belum diverifikasi ke UI asli. Jangan dipakai di spec sebelum lewat checkpoint element analysis.",
-  "_sumber": "Struktur dibangun sendiri (konvensi repo ini). Kandidat nilai dari repo qa-cazh — app sama, tapi BELUM kita buktikan. Lihat docs/REFERENSI_ELEMEN.md.",
+  "_status": "TERVERIFIKASI SEBAGIAN 19 Agustus 2026 — STRUKTUR member-side + Operational verified (DOM). Alur approve/reject BLOCKED (data Operational staging rusak/kosong; API belum ke-capture).",
+  "_sumber": "Element analysis manual pada https://v3.cazh.id (member) + https://staging-operational.cazh.id (Operational).",
+  "_tipe": "approval (read + approve/reject), BUKAN CRUD. Tidak ada Tambah/Edit/Hapus. Member-side READ-ONLY (aman di prod, tanpa cleanup).",
+
   "urls": {
     "base": "https://v3.cazh.id",
     "login": "/auth/login",
     "list": "/member/alumni/activation-log"
   },
+
+  "api": {
+    "list": "TODO — GET dari Network (member-side; cek apakah radix murni atau ada query status/tab)",
+    "approve": "TODO — POST/PUT dari Network (Operational; BLOCKED: list Operational kosong)",
+    "reject": "TODO — POST/PUT dari Network (Operational; BLOCKED)"
+  },
+
   "credentials": {
     "email": "androidtesting117@gmail.com",
     "password": "f7ki6b2u"
   },
-  "instansi": {
-    "primary": "Sekolah Digital Indonesia",
-    "secondary": "Academy QA Engineer"
-  },
-  "testData": {
-    "prefix": "QA"
-  },
-  "timeouts": {
-    "dialog": 15000,
-    "table": 15000,
-    "dropdown": 8000,
-    "toast": 12000,
-    "api": 15000
-  },
-  "labels": {
-    "pageTitle": "Log Aktivasi Alumni",
-    "pageSubtitle": "Riwayat pengajuan aktivasi alumni dan keputusannya"
-  },
+
   "tabs": {
     "pending": "Menunggu",
     "approved": "Disetujui",
-    "rejected": "Ditolak",
-    "default": "Menunggu"
+    "rejected": "Ditolak"
   },
+
+  "status": ["Menunggu", "Disetujui", "Ditolak"],
+
   "columns": {
     "tanggal": 0,
     "pengaju": 1,
@@ -44,17 +38,55 @@
     "keputusan": 6,
     "aksi": 7
   },
-  "columnLabels": [
-    "Tanggal",
-    "Pengaju",
-    "Tipe Anggota",
-    "Jumlah",
-    "Catatan",
-    "Status",
-    "Keputusan",
-    "Aksi"
-  ],
+
+  "labels": {
+    "detailButton": "Lihat Detail",
+    "closeButton": "Close"
+  },
+
+  "titles": {
+    "detailDialog": "Detail Pengajuan Aktivasi"
+  },
+
   "messages": {
-    "emptyState": "TODO"
+    "emptyStateHeading": "Belum ada log aktivasi",
+    "emptyStateDesc": "Belum ada pengajuan aktivasi alumni pada status ini.",
+    "approveSuccess": "TODO — BLOCKED (staging Operational rusak)",
+    "rejectSuccess": "TODO — BLOCKED (staging Operational rusak)"
+  },
+
+  "operational": {
+    "_status": "STRUKTUR verified, AKSI approve/reject BLOCKED (list kosong krn staging rusak).",
+    "base": "https://staging-operational.cazh.id",
+    "baseProd": "https://operational.cazh.id",
+    "route": "/approval/alumni",
+    "heading": "Approval Aktivasi Alumni",
+    "tabs": { "pending": "Menunggu Approval", "approved": "Disetujui", "rejected": "Ditolak" },
+    "urlParams": { "tab": "pending|approved|rejected", "from": "YYYY-MM-DD", "to": "YYYY-MM-DD" },
+    "search": "Cari nama partner",
+    "columns": { "tanggalPengajuan": 0, "name": 1, "instansi": 2, "pengaju": 3, "jumlahAnggota": 4, "status": 5, "action": 6 },
+    "emptyStateHeading": "Tidak ada pengajuan aktivasi alumni",
+    "emptyStateDesc": "Belum ada pengajuan pada status ini",
+    "login": { "route": "/login", "email": "input[name=\"email\"]", "password": "input[name=\"password\"]", "submit": "button:contains(\"Login\")" }
+  },
+
+  "notes": {
+    "tipe": "APPROVAL, bukan CRUD. Member-side = read + view detail (dialog 'Detail Pengajuan Aktivasi' cuma tombol Close). Approve/reject dilakukan di platform Operational terpisah (bukan di member-side).",
+    "statusBadge3State": "Status 3-state (Menunggu/Disetujui/Ditolak), BUKAN Aktif/Tidak Aktif. Teks tetap di <p> dalam [data-slot=\"badge\"] kolom index 5 (nth-child(6)). Reuse cy.assertRowStatus(row, 5, nilai).",
+    "filter": "Member-side TIDAK ada search/filter input. Filter status = lewat TABS (radix [data-slot=\"tabs-trigger\"]). Cuma ada pagination 'Baris Per Halaman'.",
+    "keputusanCol": "Kolom Keputusan (index 6) = '-' saat status Menunggu; terisi (nama pemutus + alasan) setelah Disetujui/Ditolak.",
+    "detailPerAnggota": "Satu pengajuan bisa punya banyak anggota; tiap anggota punya status sendiri. Isi dialog: Tanggal, Pengaju, Catatan, Keputusan, Daftar Anggota[] (nama, no kartu, kelas/jurusan, status per-anggota).",
+    "crossPlatform": "Approve/reject = platform Operational (staging-operational.cazh.id / operational.cazh.id). CATATAN cy.origin: v3.cazh.id & *.cazh.id SATU superdomain (cazh.id) — Cypress mem-key origin per-superdomain, jadi navigasi antar-subdomain kemungkinan TIDAK butuh cy.origin. Login Operational terpisah. Verifikasi saat mengaktifkan alur approve.",
+    "blocked": "Alur approve/reject + API + form alasan reject + toast BELUM bisa di-capture: list Operational staging KOSONG (data rusak). Perlu ada data pengajuan dulu. Struktur (route, tabs, kolom, empty state, login) SUDAH.",
+    "permission": "Di production approve digate role; akun tanpa role approver tidak bisa approve. Worth 1 negative test terpisah saat alur diaktifkan.",
+    "readOnly": "Member-side spec READ-ONLY (tidak mutasi data) → AMAN dijalankan di prod, TIDAK butuh cleanup."
+  },
+
+  "timeouts": {
+    "dialog": 15000,
+    "table": 15000,
+    "dropdown": 8000,
+    "toast": 12000,
+    "api": 15000
   }
 }

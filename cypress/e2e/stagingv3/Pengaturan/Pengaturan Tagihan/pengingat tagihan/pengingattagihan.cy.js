@@ -3,39 +3,41 @@
 // Fixture: cypress/fixtures/pengingat_tagihan.json
 //
 // =========================================================================
-// STATUS: BELUM TERVERIFIKASI — baca ini dulu.
+// STATUS: SEBAGIAN TERVERIFIKASI (19 Agustus 2026).
 // =========================================================================
-// Config POM & fixture masih berisi nilai hipotesis bertanda (?) / TODO
-// (sumber: repo qa-cazh, app-nya sama, tapi belum kita buktikan sendiri).
+// ⚠️ TARGET = PRODUCTION (v3.cazh.id). Spec ini membuat & menghapus data nyata
+//    saat blok create diaktifkan → sapu dengan cleanup:
+//    cypress/e2e/stagingv3/cleanup/cleanuppengingattagihan.cy.js
 //
-// RUN PERTAMA = ALAT VERIFIKASI, bukan laporan cakupan.
-//   1) Lihat blok "S-00 — Kontrak config" duluan. Blok itu memverifikasi
-//      asumsi paling dasar: route benar, tabel ada, tombol Tambah ada,
-//      dan field yang dideklarasikan di config memang ada di form.
-//   2) Kalau S-00 merah, SEMUA blok di bawahnya tidak ada artinya —
-//      perbaiki config POM dulu, jangan menilai hasilnya.
-//   3) Setelah S-00 hijau, kegagalan di blok lain baru bermakna dan bisa
-//      langsung dipakai sebagai hasil element analysis.
+// Khas modul ini (lihat POM):
+//   - Form Tambah = HALAMAN `/add`, BUKAN dialog. Klik "Tambah Pengingat" →
+//     navigasi. Submit via tombol form (submitExpectSuccess/Validation),
+//     BUKAN saveButton dialog.
+//   - 8 field WAJIB (+ switch WA opsional). Submit kosong → 8 pesan "wajib diisi".
+//   - Tabel TIDAK punya kolom judul/nama. Kolom terlihat: instansi(0),
+//     tanggal(1), pesan(2), jadwal(3), status(4). Identitas data QA harus
+//     ditaruh di field PESAN (kolom 2) supaya bisa dicari + di-cleanup.
 //
-// JANGAN dilaporkan sebagai cakupan resmi sebelum urutan CLAUDE.md dijalani:
-// PRD -> TC sheet (ACC) -> element analysis (ACC) -> naikkan nilai (?) -> spec final.
+// YANG SUDAH VERIFIED (ditulis penuh di bawah):
+//   • S-00 Kontrak — route, halaman /add, ke-9 field ada.
+//   • S-02 Validasi — 8 pesan wajib dengan TEKS pasti (bukan assertNotSilent).
 //
-// Assertion pesan validasi sengaja memakai assertNotSilent(), BUKAN teks
-// tertentu: teks pesannya belum terverifikasi, jadi yang di-assert adalah
-// kewajiban minimum app — tidak boleh diam.
+// YANG MASIH PENDING element analysis (blok describe.skip di bawah, JANGAN
+// ditebak — lihat komentar blok itu):
+//   • S-01/S-03/S-04/S-05 butuh isi form lengkap → widget `tanggalMulai`
+//     (datepicker popover) & `jam` (react-aria segment) DOM-nya BELUM
+//     ter-capture (pickDate/fillTime masih best-effort di POM).
+//   • Pesan editSuccess / deleteSuccess / emptyState masih TODO di fixture.
 
 import PengingatTagihan from '../../../../../support/pageobjects/PengingatTagihanPage';
 import LoginPage from '../../../../../support/pageobjects/LoginPage';
-import { makeUniq } from '../../../../../support/pageobjects/base/helpers';
 
 describe('Pengingat Tagihan — PTG', () => {
   let d;
-  let uniq;
 
   before(() => {
     cy.fixture('pengingat_tagihan').then((data) => {
       d = data;
-      uniq = makeUniq(d.testData.prefix);
     });
   });
 
@@ -45,7 +47,7 @@ describe('Pengingat Tagihan — PTG', () => {
   });
 
   // ==========================================================================
-  // S-00 — Kontrak config. Kalau blok ini merah, jangan lanjut menilai blok lain.
+  // S-00 — Kontrak config (VERIFIED)
   // ==========================================================================
   describe('S-00 — Kontrak config', () => {
     it('TC-PTG-001 | Happy | Halaman list bisa dibuka & tabel tampil', () => {
@@ -54,13 +56,14 @@ describe('Pengingat Tagihan — PTG', () => {
       PengingatTagihan.elements.table().should('be.visible');
     });
 
-    it('TC-PTG-002 | Happy | Tombol Tambah ada & membuka form', () => {
-      PengingatTagihan.visit().openAddModal();
-      PengingatTagihan.assertDialogOpen();
+    it('TC-PTG-002 | Happy | Tombol Tambah membuka HALAMAN /add', () => {
+      PengingatTagihan.visit().openAdd();
+      cy.url().should('include', PengingatTagihan.cfg.addRoute);
+      PengingatTagihan.elements.input('judul').should('be.visible');
     });
 
-    it('TC-PTG-003 | Happy | Semua field di config benar-benar ada di form', () => {
-      PengingatTagihan.visit().openAddModal();
+    it('TC-PTG-003 | Happy | Semua field (9) yang dideklarasikan ada di form', () => {
+      PengingatTagihan.visit().openAdd();
       Object.keys(PengingatTagihan.cfg.fields).forEach((key) => {
         PengingatTagihan.elements.fieldItem(key).should('exist');
       });
@@ -68,102 +71,49 @@ describe('Pengingat Tagihan — PTG', () => {
   });
 
   // ==========================================================================
-  // S-01 — Tambah
-  // ==========================================================================
-  describe('S-01 — Tambah', () => {
-    it('TC-PTG-010 | Happy | Tambah data valid -> muncul di list', () => {
-      const nama = uniq();
-      PengingatTagihan.visit().openAddModal().fillForm({ instansi: d.instansi.primary, judul: nama }).saveExpectSuccess();
-      PengingatTagihan.assertRowExists(nama);
-    });
-
-    it('TC-PTG-011 | Happy | Data persist setelah reload halaman', () => {
-      const nama = uniq();
-      PengingatTagihan.visit().openAddModal().fillForm({ instansi: d.instansi.primary, judul: nama }).saveExpectSuccess();
-      PengingatTagihan.assertPersisted(nama);
-    });
-
-    it('TC-PTG-012 | Positif | Batal menutup form tanpa menyimpan', () => {
-      const nama = uniq();
-      PengingatTagihan.visit().openAddModal().fillForm({ instansi: d.instansi.primary, judul: nama }).cancel();
-      PengingatTagihan.assertDialogClosed().assertRowNotExists(nama);
-    });
-  });
-
-  // ==========================================================================
-  // S-02 — Validasi
+  // S-02 — Validasi (VERIFIED — 8 pesan wajib dengan teks pasti)
   // ==========================================================================
   describe('S-02 — Validasi', () => {
-    it('TC-PTG-020 | Negatif | Simpan form kosong -> FE tidak boleh diam', () => {
-      PengingatTagihan.visit().openAddModal().save();
-      PengingatTagihan.assertNotSilent();
+    it('TC-PTG-020 | Negatif | Submit form kosong → tetap di /add & 8 pesan wajib tampil', () => {
+      PengingatTagihan.visit().openAdd().submitExpectValidation();
+      PengingatTagihan.assertRequiredCount(8);
     });
 
-    it('TC-PTG-021 | Negatif | Simpan form kosong -> dialog tetap terbuka', () => {
-      PengingatTagihan.visit().openAddModal().save();
-      PengingatTagihan.assertDialogOpen();
+    it('TC-PTG-021 | Negatif | Submit kosong → tiap field wajib menampilkan pesannya', () => {
+      PengingatTagihan.visit().openAdd().submitExpectValidation();
+      PengingatTagihan.assertFieldError('instansi', d.messages.instansiRequired);
+      PengingatTagihan.assertFieldError('tipe', d.messages.tipeRequired);
+      PengingatTagihan.assertFieldError('judul', d.messages.judulRequired);
+      PengingatTagihan.assertFieldError('pesan', d.messages.pesanRequired);
+      PengingatTagihan.assertFieldError('target', d.messages.targetRequired);
+      PengingatTagihan.assertFieldError('pengulangan', d.messages.pengulanganRequired);
+      PengingatTagihan.assertFieldError('tanggalMulai', d.messages.tanggalMulaiRequired);
+      PengingatTagihan.assertFieldError('jam', d.messages.jamRequired);
     });
   });
 
   // ==========================================================================
-  // S-03 — List
+  // S-01/S-03/S-04/S-05 — PENDING element analysis (SENGAJA di-skip)
   // ==========================================================================
-  describe('S-03 — List', () => {
-    it('TC-PTG-030 | Happy | Data terbaru muncul di baris teratas', () => {
-      const nama = uniq();
-      PengingatTagihan.visit().openAddModal().fillForm({ instansi: d.instansi.primary, judul: nama }).saveExpectSuccess();
-      PengingatTagihan.visit().assertFirstRowCell('judul', nama);
-    });
-
-    it('TC-PTG-031 | Positif | Search menemukan data yang baru dibuat', () => {
-      const nama = uniq();
-      PengingatTagihan.visit().openAddModal().fillForm({ instansi: d.instansi.primary, judul: nama }).saveExpectSuccess();
-      PengingatTagihan.visit().search(nama).assertRowExists(nama);
-    });
-
-    it('TC-PTG-032 | Negatif | Search tanpa hasil -> empty state', () => {
-      PengingatTagihan.visit().search('ZZZQA000TIDAKADA');
-      PengingatTagihan.assertEmptyState();
-    });
-  });
-
-  // ==========================================================================
-  // S-04 — Edit
-  // ==========================================================================
-  describe('S-04 — Edit', () => {
-    it('TC-PTG-040 | Happy | Form edit ter-prefill sesuai baris', () => {
-      const nama = uniq();
-      PengingatTagihan.visit().openAddModal().fillForm({ instansi: d.instansi.primary, judul: nama }).saveExpectSuccess();
-      PengingatTagihan.visit().search(nama).openEditByText(nama);
-      PengingatTagihan.assertFormPrefilled({ judul: nama });
-    });
-
-    it('TC-PTG-041 | Happy | Perubahan tersimpan & persist', () => {
-      const nama = uniq();
-      const namaBaru = uniq();
-      PengingatTagihan.visit().openAddModal().fillForm({ instansi: d.instansi.primary, judul: nama }).saveExpectSuccess();
-      PengingatTagihan.visit().search(nama).openEditByText(nama)
-        .fill('judul', namaBaru).saveExpectSuccess();
-      PengingatTagihan.assertPersisted(namaBaru);
-    });
-  });
-
-  // ==========================================================================
-  // S-05 — Hapus
-  // ==========================================================================
-  describe('S-05 — Hapus', () => {
-    it('TC-PTG-050 | Positif | Dialog konfirmasi muncul sebelum menghapus', () => {
-      const nama = uniq();
-      PengingatTagihan.visit().openAddModal().fillForm({ instansi: d.instansi.primary, judul: nama }).saveExpectSuccess();
-      PengingatTagihan.visit().search(nama).openDeleteByText(nama);
-      PengingatTagihan.assertDialogOpen();
-    });
-
-    it('TC-PTG-051 | Happy | Hapus data -> hilang dari list & tidak persist', () => {
-      const nama = uniq();
-      PengingatTagihan.visit().openAddModal().fillForm({ instansi: d.instansi.primary, judul: nama }).saveExpectSuccess();
-      PengingatTagihan.visit().search(nama).deleteByText(nama);
-      PengingatTagihan.assertNotPersisted(nama);
-    });
+  // JANGAN aktifkan blok ini sampai 3 hal ini terverifikasi ke DOM/Network asli:
+  //   1. Datepicker `tanggalMulai`: struktur popover kalender + tombol hari
+  //      (POM.pickDate best-effort). Tanpa ini create tak bisa mengisi form.
+  //   2. Time `jam`: segmen react-aria [role="spinbutton"] (POM.fillTime
+  //      best-effort) — pastikan urutan jam→menit & format.
+  //   3. Pesan editSuccess / deleteSuccess / emptyState (fixture masih TODO).
+  //
+  // Saat mengaktifkan: taruh nama QA rerun-safe di field PESAN (kolom 2), mis.
+  //   const uniq = makeUniq(d.testData.prefix); const pesan = uniq();
+  //   PengingatTagihan.visit().tambah({ ...d.testData, pesan });
+  // lalu cari/verifikasi & cleanup lewat kolom `pesan` (bukan judul).
+  describe.skip('S-01/S-03/S-04/S-05 — PENDING widget tanggal/jam + pesan edit/hapus/empty', () => {
+    it('TC-PTG-010 | Happy | Tambah data valid → muncul di list (PENDING)', () => {});
+    it('TC-PTG-030 | Happy | Data terbaru di baris teratas (PENDING)', () => {});
+    it('TC-PTG-031 | Positif | Search menemukan data baru (PENDING)', () => {});
+    it('TC-PTG-032 | Negatif | Search nihil → empty state (PENDING pesan emptyState)', () => {});
+    it('TC-PTG-040 | Happy | Form edit ter-prefill (PENDING)', () => {});
+    it('TC-PTG-041 | Happy | Perubahan tersimpan & persist (PENDING verb/status edit)', () => {});
+    it('TC-PTG-050 | Positif | Dialog konfirmasi hapus muncul (PENDING)', () => {});
+    it('TC-PTG-051 | Happy | Hapus → hilang & tidak persist (PENDING pesan deleteSuccess)', () => {});
   });
 });
