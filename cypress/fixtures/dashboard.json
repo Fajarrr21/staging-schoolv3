@@ -1,50 +1,95 @@
 {
-  "_status": "KERANGKA — nilai TODO/(?) belum diverifikasi ke UI asli. Jangan dipakai di spec sebelum lewat checkpoint element analysis.",
-  "_sumber": "Struktur dibangun sendiri (konvensi repo ini). Kandidat nilai dari repo qa-cazh — app sama, tapi BELUM kita buktikan. Lihat docs/REFERENSI_ELEMEN.md.",
+  "_status": "TERVERIFIKASI 100% 19 Agustus 2026 — STRUKTUR + API (DOM + Network). Modul render/smoke + interaksi filter, BUKAN CRUD. READ-ONLY (aman di prod, tanpa cleanup).",
+  "_sumber": "Element analysis manual pada https://v3.cazh.id/dashboard.",
+
   "urls": {
     "base": "https://v3.cazh.id",
     "login": "/auth/login",
     "list": "/dashboard"
   },
+
+  "api": {
+    "summary": "**/api/proxy/dashboard/summary*",
+    "billsDash": "**/api/proxy-banking/school-bills/dashboard*",
+    "tunggakan": "**/api/proxy-banking/school-bills/overdue/summary*",
+    "trend": "**/api/proxy-banking/school-bills/payments/trend*",
+    "methods": "**/api/proxy-banking/school-bills/payments/methods*",
+    "office": "**/api/proxy/office*",
+    "filterOpts": "**/api/proxy/filter-options?data=office",
+    "studentStat": "**/api/proxy/student-affair/stat"
+  },
+  "periodeParam": { "Mingguan": "weekly", "Bulanan": "monthly", "Tahunan": "yearly" },
+
   "credentials": {
     "email": "androidtesting117@gmail.com",
     "password": "f7ki6b2u"
   },
-  "instansi": {
-    "primary": "Sekolah Digital Indonesia",
-    "secondary": "Academy QA Engineer"
+
+  "heading": "Dashboard",
+  "subtitle": "Ringkasan Data dan Informasi",
+
+  "statCards": [
+    { "label": "Saldo Tunai",      "kategori": "Keuangan", "valueType": "money" },
+    { "label": "Saldo Cazhbox",    "kategori": "Keuangan", "valueType": "money" },
+    { "label": "Tagihan Terbayar", "kategori": "Tagihan",  "valueType": "money" },
+    { "label": "Tagihan Aktif",    "kategori": "Tagihan",  "valueType": "money" },
+    { "label": "Saldo Tabungan",   "kategori": "Keuangan", "valueType": "money" },
+    { "label": "Siswa",            "kategori": "Anggota",  "valueType": "number" },
+    { "label": "Guru",             "kategori": "Anggota",  "valueType": "number" },
+    { "label": "Staff",            "kategori": "Anggota",  "valueType": "number" }
+  ],
+
+  "charts": {
+    "tunggakan": {
+      "title": "Grafik Tunggakan",
+      "filterKind": "instansi",
+      "api": "**/api/proxy-banking/school-bills/overdue/summary*",
+      "instansiParam": "store_ids",
+      "instansiOptions": ["Semua Lembaga", "Academy Cazh", "Academy QA Engineer", "Sekolah Digital Indonesia", "Yayasan New School"],
+      "defaultInstansi": "Semua Lembaga"
+    },
+    "pembayaranTagihan": {
+      "title": "Grafik Pembayaran Tagihan",
+      "filterKind": "periode",
+      "api": "**/api/proxy-banking/school-bills/payments/trend*",
+      "footerPrefix": "Total pembayaran"
+    },
+    "metodePembayaran": {
+      "title": "Grafik Metode Pembayaran",
+      "filterKind": "periode",
+      "api": "**/api/proxy-banking/school-bills/payments/methods*",
+      "footerPrefix": "Total pembayaran"
+    }
   },
+
+  "periodeOptions": ["Mingguan", "Bulanan", "Tahunan"],
+  "defaultPeriode": "Bulanan",
+
+  "widgets": {
+    "dataLembaga": { "title": "Data Lembaga" },
+    "metodePembayaran": { "title": "Metode Pembayaran" },
+    "transaksiTerakhir": { "title": "Transaksi Terakhir" }
+  },
+
   "testData": {
-    "prefix": "QA"
+    "periodeBaru": "Tahunan",
+    "instansiPilih": "Academy Cazh"
   },
+
+  "notes": {
+    "tipe": "Render/smoke + filter. Tidak ada Tambah/Edit/Hapus. READ-ONLY -> tanpa cleanup, aman di prod.",
+    "valueDinamis": "Value kartu ikut data -> assert FORMAT/keberadaan (money = mengandung 'Rp'; number = mengandung digit), BUKAN angka pasti.",
+    "chartLib": "svg.recharts-surface masih 🔶 unverified -> spec TIDAK assert svg chart; render grafik dibuktikan lewat JUDUL (verified). Naikkan ke verified kalau lib dikonfirmasi.",
+    "periodeFilter": "2 select [data-slot=\"select-trigger\"] (Grafik Pembayaran Tagihan & Metode Pembayaran), default 'Bulanan'. Ganti periode -> intercept API (trend/methods) dengan query period= (Mingguan=weekly, Bulanan=monthly, Tahunan=yearly) + footer 'Total pembayaran <Periode> ...' berubah. Dobel-assert: API param + teks DOM.",
+    "instansiFilter": "Titik-tiga [data-slot=\"dropdown-menu-trigger\"] di Grafik Tunggakan -> [role=\"menuitem\"] (5 opsi). Subtitle TIDAK memuat nama instansi -> assert via API: pilih instansi -> intercept overdue/summary dengan query store_ids= (Semua Lembaga = semua store_ids).",
+    "widgetNav": "Klik panah -> detail lembaga: selector panah & route tujuan BELUM ke-capture -> S-03 describe.skip."
+  },
+
   "timeouts": {
     "dialog": 15000,
     "table": 15000,
     "dropdown": 8000,
     "toast": 12000,
     "api": 15000
-  },
-  "labels": {
-    "pageTitle": "Dashboard"
-  },
-  "metricCards": [
-    "Saldo Tunai",
-    "Saldo Cazhbox",
-    "Tagihan Terbayar",
-    "Tagihan Aktif",
-    "Saldo Tabungan",
-    "Siswa",
-    "Guru"
-  ],
-  "sections": [
-    "Tunggakan",
-    "Grafik Pembayaran",
-    "Transaksi Terakhir",
-    "Metode Pembayaran",
-    "Data Lembaga"
-  ],
-  "weakPin": {
-    "_catatan": "akun PIN lemah ada di app.json -> accounts.weakPin. JANGAN dipakai session global.",
-    "bannerTitle": "TODO — qa-cazh: 'Perkuat Keamanan PIN Anda' (unverified)"
   }
 }

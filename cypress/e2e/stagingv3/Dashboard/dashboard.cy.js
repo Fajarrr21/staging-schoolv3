@@ -1,30 +1,29 @@
-// Spec Dashboard — DSH
+// Spec Dashboard — DSB
 // POM: cypress/support/pageobjects/DashboardPage.js
 // Fixture: cypress/fixtures/dashboard.json
 //
 // =========================================================================
-// STATUS: BELUM TERVERIFIKASI — tapi paling aman dijalankan duluan.
+// STATUS: TERVERIFIKASI 100% 19 Agustus 2026 (DOM + Network / API).
 // =========================================================================
-// Modul ini SEPENUHNYA READ-ONLY: tidak membuat, mengubah, atau menghapus data.
-// Jadi nol risiko mencemari staging — kandidat terbaik untuk run pertama
-// sekaligus menguji apakah pola POM kita cocok untuk modul non-CRUD.
+// ⚠️ TARGET = PRODUCTION (v3.cazh.id), TAPI spec ini READ-ONLY (render/smoke +
+//    filter). TIDAK membuat/mengubah/menghapus data -> AMAN di prod, TANPA cleanup.
 //
-// Asumsi paling rapuh: label kartu metrik & apakah grafiknya memang recharts.
-//
-// CATATAN AKUN: banner + popup "Perkuat Keamanan PIN Anda" hanya muncul pada
-// akun PIN lemah (cypress/fixtures/app.json -> accounts.weakPin). Spec ini
-// memakai akun normal, jadi TC-DSH-030 meng-assert banner itu TIDAK ada.
-// Jangan memakai akun weakPin untuk session global — dialognya menutupi UI
-// dan bikin spec modul lain merah bukan karena bug.
+// Modul render/smoke + interaksi filter (BUKAN CRUD):
+//   - 8 kartu statistik (value dinamis -> assert FORMAT, bukan angka pasti).
+//   - 3 grafik (render dibuktikan lewat JUDUL; svg chart 🔶 unverified, TIDAK di-assert).
+//   - Filter periode -> intercept trend/methods (period=<param>) + footer berubah.
+//   - Filter instansi -> intercept overdue/summary (store_ids=).
 
 import Dashboard from '../../../support/pageobjects/DashboardPage';
 import LoginPage from '../../../support/pageobjects/LoginPage';
 
-describe('Dashboard — DSH', () => {
+describe('Dashboard — DSB', () => {
   let d;
 
   before(() => {
-    cy.fixture('dashboard').then((data) => { d = data; });
+    cy.fixture('dashboard').then((data) => {
+      d = data;
+    });
   });
 
   beforeEach(() => {
@@ -33,60 +32,78 @@ describe('Dashboard — DSH', () => {
   });
 
   // ==========================================================================
-  // S-00 — Kontrak
+  // S-00 — Smoke / render
   // ==========================================================================
-  describe('S-00 — Kontrak config', () => {
-    it('TC-DSH-001 | Happy | Dashboard termuat setelah login', () => {
+  describe('S-00 — Smoke / render', () => {
+    it('TC-DSB-001 | Happy | Halaman dashboard terbuka (heading + subtitle)', () => {
       Dashboard.visit();
-      cy.url().should('include', '/dashboard');
-      Dashboard.elements.pageTitle().should('be.visible');
+      cy.url().should('include', d.urls.list);
+      Dashboard.assertHeading(d.subtitle);
     });
 
-    it('TC-DSH-002 | Happy | Ada kartu yang dirender di halaman', () => {
+    it('TC-DSB-002 | Happy | 8 kartu statistik render dengan value sesuai format', () => {
+      Dashboard.visit().assertStatCards(d.statCards);
+    });
+
+    it('TC-DSB-003 | Happy | 3 judul grafik tampil', () => {
       Dashboard.visit();
-      Dashboard.elements.cards().should('have.length.gt', 0);
+      Dashboard.assertChartTitle(d.charts.tunggakan.title);
+      Dashboard.assertChartTitle(d.charts.pembayaranTagihan.title);
+      Dashboard.assertChartTitle(d.charts.metodePembayaran.title);
+    });
+
+    it('TC-DSB-004 | Happy | 3 judul widget data tampil', () => {
+      Dashboard.visit();
+      Dashboard.assertWidgetTitle(d.widgets.dataLembaga.title);
+      Dashboard.assertWidgetTitle(d.widgets.metodePembayaran.title);
+      Dashboard.assertWidgetTitle(d.widgets.transaksiTerakhir.title);
     });
   });
 
   // ==========================================================================
-  // S-01 — Kartu metrik
+  // S-01 — Filter periode: intercept API (period=<param>) + footer berubah
   // ==========================================================================
-  describe('S-01 — Kartu metrik', () => {
-    it('TC-DSH-010 | Happy | Semua kartu metrik yang diharapkan tampil', () => {
-      Dashboard.visit().assertMetricCards(d.metricCards);
+  describe('S-01 — Filter periode', () => {
+    it('TC-DSB-010 | Happy | Grafik Pembayaran Tagihan: Tahunan -> API period=yearly + footer', () => {
+      const chart = d.charts.pembayaranTagihan;
+      const param = d.periodeParam[d.testData.periodeBaru]; // yearly
+      Dashboard.visit().setPeriodeAndWait(chart.title, d.testData.periodeBaru, chart.api, param);
+      Dashboard.assertChartFooterPeriode(chart.title, chart.footerPrefix, d.testData.periodeBaru);
     });
 
-    // Satu TC per kartu: kalau satu kartu gagal load, yang merah cuma kartu itu.
-    // Assertion gabungan akan menyembunyikan kartu mana yang bermasalah.
-    ['Saldo Tunai', 'Tagihan Aktif', 'Siswa', 'Guru'].forEach((label, i) => {
-      it(`TC-DSH-01${1 + i} | Positif | Kartu "${label}" punya nilai, bukan cuma judul`, () => {
-        Dashboard.visit().assertCardHasValue(label);
-      });
+    it('TC-DSB-011 | Happy | Grafik Metode Pembayaran: Tahunan -> API period=yearly + footer', () => {
+      const chart = d.charts.metodePembayaran;
+      const param = d.periodeParam[d.testData.periodeBaru];
+      Dashboard.visit().setPeriodeAndWait(chart.title, d.testData.periodeBaru, chart.api, param);
+      Dashboard.assertChartFooterPeriode(chart.title, chart.footerPrefix, d.testData.periodeBaru);
     });
   });
 
   // ==========================================================================
-  // S-02 — Section & grafik
+  // S-02 — Filter instansi (dropdown titik-tiga) di Grafik Tunggakan
   // ==========================================================================
-  describe('S-02 — Section & grafik', () => {
-    it('TC-DSH-020 | Happy | Semua section utama tampil', () => {
-      Dashboard.visit();
-      d.sections.forEach((s) => Dashboard.assertSectionExists(s));
+  describe('S-02 — Filter instansi', () => {
+    it('TC-DSB-020 | Happy | Dropdown instansi memuat 5 opsi lembaga', () => {
+      const chart = d.charts.tunggakan;
+      Dashboard.visit().openInstansiMenu(chart.title);
+      Dashboard.assertInstansiOptions(chart.instansiOptions);
     });
 
-    it('TC-DSH-021 | Positif | Grafik Tunggakan benar-benar dirender', () => {
-      // Kalau gagal dengan "element not found" pada svg.recharts-surface,
-      // berarti app TIDAK memakai recharts — ganti selector chart di POM.
-      Dashboard.visit().assertChartRendered('Tunggakan');
+    it('TC-DSB-021 | Happy | Pilih instansi -> API overdue/summary dgn store_ids=', () => {
+      const chart = d.charts.tunggakan;
+      Dashboard.visit().openInstansiMenu(chart.title);
+      Dashboard.pickInstansiAndWait(d.testData.instansiPilih, chart.api, chart.instansiParam);
     });
   });
 
   // ==========================================================================
-  // S-03 — Banner PIN lemah
+  // S-03 — Navigasi widget (BLOCKED) — selector panah & route detail belum ada
+  // --------------------------------------------------------------------------
+  // 🚫 Klik panah "→" di widget Data Lembaga -> halaman detail lembaga.
+  //    Belum ke-capture: (1) selector tombol panah per baris widget,
+  //    (2) route/halaman tujuan detail lembaga. Aktifkan setelah element analysis.
   // ==========================================================================
-  describe('S-03 — Banner PIN', () => {
-    it('TC-DSH-030 | Positif | Akun normal tidak memunculkan banner PIN lemah', () => {
-      Dashboard.visit().assertWeakPinBannerAbsent();
-    });
+  describe.skip('S-03 — Navigasi widget (BLOCKED)', () => {
+    it('TODO-DSB-030 | Happy | Klik detail di Data Lembaga -> pindah ke halaman detail', () => {});
   });
 });
