@@ -20,7 +20,7 @@
 
 import KategoriInventaris from '../../../../../support/pageobjects/KategoriInventarisPage';
 import LoginPage from '../../../../../support/pageobjects/LoginPage';
-import { makeUniq } from '../../../../../support/pageobjects/base/helpers';
+import { makeUniq, applyEnvInstansi } from '../../../../../support/pageobjects/base/helpers';
 
 describe('Kategori Inventaris — KIN', () => {
   let d;
@@ -29,6 +29,7 @@ describe('Kategori Inventaris — KIN', () => {
   before(() => {
     cy.fixture('kategori_inventaris').then((data) => {
       d = data;
+      applyEnvInstansi(d); // resolusi instansi per-env (prod/staging) — fail-fast kalau env belum diisi
       uniq = makeUniq(d.testData.prefix);
     });
   });

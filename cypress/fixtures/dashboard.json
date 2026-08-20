@@ -45,7 +45,6 @@
       "filterKind": "instansi",
       "api": "**/api/proxy-banking/school-bills/overdue/summary*",
       "instansiParam": "store_ids",
-      "instansiOptions": ["Semua Lembaga", "Academy Cazh", "Academy QA Engineer", "Sekolah Digital Indonesia", "Yayasan New School"],
       "defaultInstansi": "Semua Lembaga"
     },
     "pembayaranTagihan": {
@@ -65,6 +64,18 @@
   "periodeOptions": ["Mingguan", "Bulanan", "Tahunan"],
   "defaultPeriode": "Bulanan",
 
+  "instansiByEnv": {
+    "_note": "PER-ENV (opsi lembaga di dropdown Grafik Tunggakan + yang dipilih). Dashboard READ-ONLY, jadi kalau blok env aktif kosong S-02 di-SKIP (bukan fail), smoke S-00/S-01 tetap jalan. Isi blok staging sebelum run filter instansi di staging.",
+    "production": {
+      "options": ["Semua Lembaga", "Academy Cazh", "Academy QA Engineer", "Sekolah Digital Indonesia", "Yayasan New School"],
+      "pick": "Academy Cazh"
+    },
+    "staging": {
+      "options": [],
+      "pick": ""
+    }
+  },
+
   "widgets": {
     "dataLembaga": { "title": "Data Lembaga" },
     "metodePembayaran": { "title": "Metode Pembayaran" },
@@ -72,8 +83,7 @@
   },
 
   "testData": {
-    "periodeBaru": "Tahunan",
-    "instansiPilih": "Academy Cazh"
+    "periodeBaru": "Tahunan"
   },
 
   "notes": {

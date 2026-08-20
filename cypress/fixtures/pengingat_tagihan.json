@@ -16,13 +16,21 @@
     "password": "f7ki6b2u"
   },
   "instansi": {
-    "primary": "Academy QA Engineer",
-    "secondary": "Sekolah Digital Indonesia",
-    "options": {
-      "Academy Cazh": "6a66106c95849c0019d19faa",
-      "Academy QA Engineer": "6a647cd1c1a15d00193aa39a",
-      "Sekolah Digital Indonesia": "6a4ca54faab9f40019199d3e",
-      "Yayasan New School": "6a4c61fecace47001a67a887"
+    "_note": "PER-ENV supaya staging & production tidak nyampur. Saat blok create (S-01/S-03..) DIAKTIFKAN, panggil applyEnvInstansi(d) di before() DAN buang testData.instansi di bawah (biar resolusi env yang mengisi). Sekarang create di-skip, jadi testData.instansi masih hardcode prod (tak dipakai test aktif).",
+    "production": {
+      "primary": "Academy QA Engineer",
+      "secondary": "Sekolah Digital Indonesia",
+      "options": {
+        "Academy Cazh": "6a66106c95849c0019d19faa",
+        "Academy QA Engineer": "6a647cd1c1a15d00193aa39a",
+        "Sekolah Digital Indonesia": "6a4ca54faab9f40019199d3e",
+        "Yayasan New School": "6a4c61fecace47001a67a887"
+      }
+    },
+    "staging": {
+      "primary": "",
+      "secondary": "",
+      "options": {}
     }
   },
   "labels": {

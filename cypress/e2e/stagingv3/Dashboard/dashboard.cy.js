@@ -16,6 +16,7 @@
 
 import Dashboard from '../../../support/pageobjects/DashboardPage';
 import LoginPage from '../../../support/pageobjects/LoginPage';
+import { currentEnv } from '../../../support/pageobjects/base/helpers';
 
 describe('Dashboard — DSB', () => {
   let d;
@@ -23,6 +24,11 @@ describe('Dashboard — DSB', () => {
   before(() => {
     cy.fixture('dashboard').then((data) => {
       d = data;
+      // Resolusi opsi instansi per-env supaya staging & production tidak nyampur.
+      // Dashboard READ-ONLY -> tidak fail-fast di sini; S-02 yang skip kalau kosong.
+      const inst = (d.instansiByEnv && d.instansiByEnv[currentEnv()]) || { options: [], pick: '' };
+      d.charts.tunggakan.instansiOptions = inst.options;
+      d.testData.instansiPilih = inst.pick;
     });
   });
 
@@ -83,6 +89,15 @@ describe('Dashboard — DSB', () => {
   // S-02 — Filter instansi (dropdown titik-tiga) di Grafik Tunggakan
   // ==========================================================================
   describe('S-02 — Filter instansi', () => {
+    // Opsi instansi = data per-env. Kalau env aktif belum diisi (mis. staging
+    // kosong), skip blok ini biar tidak assert data prod di staging & sebaliknya.
+    beforeEach(function () {
+      if (!d.charts.tunggakan.instansiOptions || d.charts.tunggakan.instansiOptions.length === 0) {
+        cy.log(`Opsi instansi untuk env "${currentEnv()}" belum diisi (instansiByEnv) — S-02 dilewati.`);
+        this.skip();
+      }
+    });
+
     it('TC-DSB-020 | Happy | Dropdown instansi memuat 5 opsi lembaga', () => {
       const chart = d.charts.tunggakan;
       Dashboard.visit().openInstansiMenu(chart.title);

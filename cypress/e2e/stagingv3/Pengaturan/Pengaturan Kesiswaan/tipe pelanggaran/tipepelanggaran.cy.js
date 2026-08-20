@@ -21,7 +21,7 @@
 
 import TipePelanggaran from '../../../../../support/pageobjects/TipePelanggaranPage';
 import LoginPage from '../../../../../support/pageobjects/LoginPage';
-import { makeUniq } from '../../../../../support/pageobjects/base/helpers';
+import { makeUniq, applyEnvInstansi } from '../../../../../support/pageobjects/base/helpers';
 
 describe('Tipe Pelanggaran — TPL', () => {
   let d;
@@ -30,6 +30,7 @@ describe('Tipe Pelanggaran — TPL', () => {
   before(() => {
     cy.fixture('tipe_pelanggaran').then((data) => {
       d = data;
+      applyEnvInstansi(d); // resolusi instansi per-env (prod/staging) — fail-fast kalau env belum diisi
       uniq = makeUniq(d.testData.prefix);
     });
   });

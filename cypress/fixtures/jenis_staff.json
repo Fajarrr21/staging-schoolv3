@@ -15,13 +15,21 @@
     "password": "f7ki6b2u"
   },
   "instansi": {
-    "primary": "Academy QA Engineer",
-    "secondary": "Sekolah Digital Indonesia",
-    "options": {
-      "Academy Cazh": "6a66106c95849c0019d19faa",
-      "Academy QA Engineer": "6a647cd1c1a15d00193aa39a",
-      "Sekolah Digital Indonesia": "6a4ca54faab9f40019199d3e",
-      "Yayasan New School": "6a4c61fecace47001a67a887"
+    "_note": "PER-ENV supaya staging & production tidak nyampur. Runtime pilih via applyEnvInstansi(d) (baca Cypress.env('environment')). Isi blok staging (primary/options dari staging) sebelum run di staging — kalau kosong, spec fail-fast.",
+    "production": {
+      "primary": "Academy QA Engineer",
+      "secondary": "Sekolah Digital Indonesia",
+      "options": {
+        "Academy Cazh": "6a66106c95849c0019d19faa",
+        "Academy QA Engineer": "6a647cd1c1a15d00193aa39a",
+        "Sekolah Digital Indonesia": "6a4ca54faab9f40019199d3e",
+        "Yayasan New School": "6a4c61fecace47001a67a887"
+      }
+    },
+    "staging": {
+      "primary": "",
+      "secondary": "",
+      "options": {}
     }
   },
   "labels": {
@@ -48,7 +56,6 @@
   },
   "testData": {
     "prefix": "QA",
-    "instansi": "Academy QA Engineer",
     "nama": "QA Auto Staff"
   },
   "notes": {
